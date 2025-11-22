@@ -1,0 +1,445 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import platform-like CSS variables */
+@import './variables.css';
+
+/* ===== LIGHT SURFACE HELPERS ===== */
+.bg-surface-primary {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.bg-surface-primary .ant-typography,
+.bg-surface-primary .ant-card-meta-title,
+.bg-surface-primary .ant-card-meta-description,
+.bg-surface-primary .ant-descriptions-item-label,
+.bg-surface-primary .ant-descriptions-item-content,
+.bg-surface-primary .ant-statistic-title,
+.bg-surface-primary .ant-statistic-content {
+  color: var(--color-text);
+}
+
+.bg-surface-primary .ant-btn:not(.ant-btn-primary):not(.ant-btn-link) {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+  background-color: transparent;
+}
+
+.bg-surface-primary .ant-btn:not(.ant-btn-primary):not(.ant-btn-link):hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.bg-surface-primary .ant-tabs-tab-btn {
+  color: var(--color-text-secondary);
+}
+
+.bg-surface-primary .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+.bg-surface-primary .ant-tabs-tab-btn:focus,
+.bg-surface-primary .ant-tabs-tab-btn:hover {
+  color: var(--color-text);
+}
+
+.bg-surface-primary .ant-divider,
+.bg-surface-primary .ant-tabs-nav::before {
+  border-color: var(--color-border);
+}
+
+.light-theme .bg-surface-primary {
+  --ant-color-text: var(--color-text);
+  --ant-color-border: var(--color-border);
+  --ant-color-bg-container: var(--color-surface);
+  --ant-color-bg-elevated: var(--color-surface);
+}
+
+.dark-theme .bg-surface-primary {
+  --ant-color-text: var(--color-text);
+  --ant-color-border: var(--color-border);
+  --ant-color-bg-container: var(--color-surface);
+  --ant-color-bg-elevated: var(--color-surface);
+}
+
+.high-contrast-theme .bg-surface-primary {
+  --ant-color-text: var(--color-text);
+  --ant-color-border: var(--color-border);
+  --ant-color-bg-container: var(--color-surface);
+  --ant-color-bg-elevated: var(--color-surface);
+}
+
+/* ===== SCIENTIFIC PLATFORM STYLING ===== */
+
+/* ===== IMPROVED LOADING EXPERIENCE ===== */
+/* Note: FOUC prevention is handled by host app; avoid html visibility hacks here */
+
+/* Smooth theme transitions */
+html, body { height: 100%; }
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; /* Better number display */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Loading states for better UX */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.dark-theme .loading-skeleton {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Component loading states */
+.component-loading {
+  opacity: 0.7;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.component-loaded {
+  opacity: 1;
+  pointer-events: auto;
+  animation: fade-in-up 0.3s ease-out;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== IMPROVED THEME TRANSITIONS ===== */
+
+/* Avoid global wildcard transitions when embedded; scope to module root */
+.module-container, .module-container * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Theme-specific body styles are inherited from host; SDK avoids setting background/text colors */
+
+/* Ensure container also gets theme background with transition */
+#root {
+  min-height: 100vh;
+  background-color: inherit;
+  transition: background-color 0.3s ease;
+}
+
+/* ===== CHART & VISUALIZATION STYLING ===== */
+
+/* Plotly.js optimizations for scientific charts */
+.plotly-notifier {
+  display: none !important; /* Hide plotly logo/notifications in production */
+}
+
+.js-plotly-plot .plotly .modebar {
+  right: 10px !important;
+  top: 10px !important;
+}
+
+.js-plotly-plot .plotly .modebar-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark-theme .js-plotly-plot .plotly .modebar-btn {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid #333 !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* Scientific chart containers */
+.chart-container, .plotly-container {
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.chart-container:hover, .plotly-container:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--ant-color-primary-border);
+}
+
+.dark-theme .chart-container,
+.dark-theme .plotly-container {
+  background: var(--ant-color-bg-elevated);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== SCIENTIFIC DATA DISPLAY ===== */
+
+/* Scientific number formatting */
+.scientific-number {
+  font-variant-numeric: tabular-nums;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+/* Data tables optimized for scientific data */
+.scientific-table {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.scientific-table th {
+  background: var(--ant-color-bg-container);
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 2px solid var(--ant-color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.scientific-table td {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--ant-color-border-secondary);
+  font-variant-numeric: tabular-nums; /* Better number alignment */
+}
+
+
+/* ===== MODULE CONTAINER STYLING ===== */
+
+/* Scientific module containers */
+.module-container {
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.module-container:hover {
+  border-color: var(--ant-color-primary-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Module header styling */
+.module-header {
+  border-bottom: 2px solid var(--ant-color-border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.module-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ant-color-text);
+  margin: 0;
+}
+
+/* ===== SKELETON SCREENS ===== */
+
+/* Base skeleton styling with theme awareness */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-bg-primary) 25%,
+    var(--skeleton-bg-secondary) 50%,
+    var(--skeleton-bg-primary) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite ease-in-out;
+  border-radius: 4px;
+  /* Ensure skeleton color overrides any other background colors */
+  background-color: var(--skeleton-bg-primary) !important;
+}
+
+/* Theme-aware skeleton colors */
+:root {
+  --skeleton-bg-primary: #f0f0f0;
+  --skeleton-bg-secondary: #e0e0e0;
+  --skeleton-text: #d0d0d0;
+  --skeleton-card: #f8f8f8;
+}
+
+.dark-theme {
+  --skeleton-bg-primary: #2a2a2a;
+  --skeleton-bg-secondary: #3a3a3a;
+  --skeleton-text: #4a4a4a;
+  --skeleton-card: #1f1f1f;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ===== ANT DESIGN CUSTOMIZATIONS FOR SCIENCE ===== */
+
+.ant-layout-sider {
+  box-shadow: 2px 0 8px var(--ant-color-border-secondary);
+}
+
+/* Header background - theme aware */
+.ant-layout-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e8e8e8 !important;
+}
+
+.dark-theme .ant-layout-header {
+  background: #1f1f1f !important;
+  border-bottom: 1px solid #303030 !important;
+}
+
+/* Menu optimizations for scientific navigation */
+.ant-menu-item {
+  transition: all 0.2s ease;
+}
+
+.ant-menu-item:hover {
+  background-color: var(--ant-color-primary-bg) !important;
+}
+
+/* Card styling for scientific modules */
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.ant-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Input styling for scientific data entry */
+.ant-input, .ant-textarea {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== CSS VARIABLES FOR SCIENTIFIC THEMING ===== */
+:root {
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f5f5f5;
+  --color-surface-tertiary: #e8e8e8;
+  --color-data-primary: #0052cc;
+  --color-data-secondary: #17a2b8;
+  --color-data-accent: #28a745;
+  --color-data-warning: #ffc107;
+  --color-data-danger: #dc3545;
+}
+
+.dark-theme {
+  --color-surface-primary: #1f1f1f;
+  --color-surface-secondary: #2a2a2a;
+  --color-surface-tertiary: #3a3a3a;
+  --color-data-primary: #4d91ff;
+  --color-data-secondary: #5bc0de;
+  --color-data-accent: #5cb85c;
+  --color-data-warning: #f0ad4e;
+  --color-data-danger: #d9534f;
+}
+
+/* ===== ACCESSIBILITY FOR SCIENTIFIC USERS ===== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .chart-container, .plotly-container {
+    border: 2px solid var(--ant-color-border);
+  }
+
+  .ant-card {
+    border: 2px solid var(--ant-color-border);
+  }
+}
+
+/* ===== RESPONSIVE DESIGN FOR SCIENTIFIC DATA ===== */
+
+@media (max-width: 768px) {
+  .chart-container, .plotly-container {
+    padding: 12px;
+  }
+
+  .scientific-table {
+    font-size: 12px;
+  }
+
+  .scientific-table th,
+  .scientific-table td {
+    padding: 6px 8px;
+  }
+}
+
+/* ===== ACCESSIBILITY FOR SCIENTIFIC USERS ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+
+  .component-loaded {
+    animation: none;
+  }
+}
+
+/* ===== PAGE TRANSITIONS ===== */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}

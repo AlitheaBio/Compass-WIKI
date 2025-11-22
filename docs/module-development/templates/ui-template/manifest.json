@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "name": "module-name",
+  "version": "1.0.0",
+  "type": "with-ui",
+  "computeType": "docker",
+  "description": "Module with user interface",
+  "execution": {
+    "entrypoint": "backend.main:UIModule",
+    "supports": ["interactive"],
+    "defaultMode": "interactive",
+    "contextContract": "module-run-context-v1"
+  },
+  "author": {
+    "name": "Developer Name",
+    "email": "developer@example.com",
+    "organization": "Organization"
+  },
+  "runtime": "python3.11",
+  "ui": {
+    "framework": "react",
+    "buildCommand": "npm run build",
+    "distPath": "frontend/dist",
+    "bucket": "hla-compass-ui-dev",
+    "bundleKey": "modules/module-name/1.0.0/bundle.js"
+  },
+  "inputs": {
+    "type": "object",
+    "title": "Module Inputs",
+    "required": ["param1"],
+    "properties": {
+      "param1": {
+        "type": "string",
+        "title": "Primary parameter",
+        "description": "User provided value exposed via the UI"
+      },
+      "param2": {
+        "type": "string",
+        "title": "Optional parameter",
+        "description": "Defaults can be customized",
+        "default": "default_value"
+      }
+    }
+  },
+  "outputs": {
+    "results": {
+      "type": "array",
+      "description": "Processed results for UI display"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics"
+    }
+  },
+  "resources": {
+    "memory": 512,
+    "timeout": 300,
+    "environment": {
+      "LOG_LEVEL": "INFO"
+    }
+  },
+  "permissions": {
+    "database": ["read"],
+    "storage": true,
+    "network": []
+  },
+  "pricing": {
+    "tiers": [
+      {
+        "tier": "developer",
+        "model": "usage-based",
+        "amountAct": 0.5
+      }
+    ]
+  },
+  "dependencies": {
+    "peptides": true,
+    "storage": true,
+    "api": true
+  }
+}

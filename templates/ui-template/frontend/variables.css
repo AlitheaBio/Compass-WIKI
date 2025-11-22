@@ -1,0 +1,182 @@
+/**
+ * CSS Variables
+ * Generated from design system tokens (mirrors platform)
+ */
+
+:root {
+  /* Colors - Light Theme (Default) */
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #fafafa;
+  --color-surface-tertiary: #f5f5f5;
+  
+  --color-text: #171717;
+  --color-text-secondary: #525252;
+  --color-text-tertiary: #737373;
+  --color-text-disabled: #a3a3a3;
+  
+  --color-border: #e5e5e5;
+  --color-border-secondary: #d4d4d4;
+  
+  --color-primary: #0052cc;
+  --color-primary-hover: #0041a3;
+  --color-primary-active: #00317a;
+  
+  --color-success: #0ea5e9;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  
+  /* Ant Design variables (explicit defaults for consistency) */
+  --ant-color-primary: var(--color-primary);
+  --ant-color-primary-hover: var(--color-primary-hover);
+  --ant-color-primary-active: var(--color-primary-active);
+  --ant-color-bg-base: var(--color-background);
+  --ant-color-bg-container: var(--color-surface);
+  --ant-color-bg-elevated: var(--color-surface);
+  --ant-color-text: var(--color-text);
+  --ant-color-text-secondary: var(--color-text-secondary);
+  --ant-color-border: var(--color-border);
+  --ant-color-border-secondary: var(--color-border-secondary);
+  
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  
+  /* Spacing */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;
+  --radius-base: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  
+  /* Transitions */
+  --transition-fast: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: all 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Z-index */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-tooltip: 70;
+  --z-notification: 80;
+}
+
+/* Dark Theme */
+body.dark-theme {
+  --color-background: #0a0a0a;
+  --color-surface: #171717;
+  --color-surface-secondary: #262626;
+  --color-surface-tertiary: #404040;
+  
+  --color-text: #fafafa;
+  --color-text-secondary: #e5e5e5;
+  --color-text-tertiary: #a3a3a3;
+  --color-text-disabled: #525252;
+  
+  --color-border: #404040;
+  --color-border-secondary: #525252;
+  
+  --color-primary: #1a71ff;
+  --color-primary-hover: #4d91ff;
+  --color-primary-active: #80b1ff;
+  
+  --color-success: #38bdf8;
+  --color-error: #f87171;
+  --color-warning: #fbbf24;
+  
+  --ant-color-primary: var(--color-primary);
+  --ant-color-primary-hover: var(--color-primary-hover);
+  --ant-color-primary-active: var(--color-primary-active);
+  --ant-color-bg-base: var(--color-background);
+  --ant-color-bg-container: var(--color-surface);
+  --ant-color-bg-elevated: var(--color-surface);
+  --ant-color-text: var(--color-text);
+  --ant-color-text-secondary: var(--color-text-secondary);
+  --ant-color-border: var(--color-border);
+  --ant-color-border-secondary: var(--color-border-secondary);
+  
+  /* Dark theme shadows are subtle */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+}
+
+/* High Contrast Theme */
+body.high-contrast-theme {
+  --color-background: #000000;
+  --color-surface: #000000;
+  --color-surface-secondary: #0a0a0a;
+  --color-surface-tertiary: #141414;
+  
+  --color-text: #ffffff;
+  --color-text-secondary: #ffffff;
+  --color-text-tertiary: #ffffff;
+  --color-text-disabled: #808080;
+  
+  --color-border: #ffffff;
+  --color-border-secondary: #ffffff;
+  
+  --color-primary: #00b4d8;
+  --color-primary-hover: #0096c7;
+  --color-primary-active: #0077b6;
+  
+  --color-success: #06ffa5;
+  --color-error: #ff006e;
+  --color-warning: #ffbe0b;
+  
+  --ant-color-primary: var(--color-primary);
+  --ant-color-primary-hover: var(--color-primary-hover);
+  --ant-color-primary-active: var(--color-primary-active);
+  --ant-color-bg-base: var(--color-background);
+  --ant-color-bg-container: var(--color-surface);
+  --ant-color-bg-elevated: var(--color-surface);
+  --ant-color-text: var(--color-text);
+  --ant-color-text-secondary: var(--color-text-secondary);
+  --ant-color-border: var(--color-border);
+  --ant-color-border-secondary: var(--color-border-secondary);
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "name": "golden-no-ui",
+  "version": "0.1.0",
+  "type": "no-ui",
+  "computeType": "docker",
+  "description": "Reference backend-only module used in SDK golden path tests.",
+  "execution": {
+    "entrypoint": "backend.main:GoldenNoUIModule",
+    "supports": ["interactive", "workflow"],
+    "defaultMode": "interactive",
+    "contextContract": "module-run-context-v1"
+  },
+  "author": {
+    "name": "Alithea Bio",
+    "email": "modules@alithea.bio",
+    "organization": "Reference"
+  },
+  "runtime": "python3.11",
+  "inputs": {
+    "type": "object",
+    "title": "Input parameters",
+    "required": ["samples"],
+    "properties": {
+      "samples": {
+        "type": "array",
+        "title": "Samples",
+        "description": "List of sample identifiers to summarize",
+        "items": {"type": "string"}
+      },
+      "options": {
+        "type": "object",
+        "title": "Options",
+        "properties": {
+          "include_peptides": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include mock peptide annotations"
+          }
+        }
+      }
+    }
+  },
+  "outputs": {
+    "results": {
+      "type": "object",
+      "description": "Structured summary returned from the backend"
+    }
+  },
+  "resources": {
+    "memory": 512,
+    "timeout": 300
+  },
+  "permissions": {
+    "database": ["read"],
+    "storage": true,
+    "network": []
+  },
+  "pricing": {
+    "tiers": [
+      {
+        "tier": "developer",
+        "model": "usage-based",
+        "amountAct": 0.1
+      }
+    ]
+  }
+}

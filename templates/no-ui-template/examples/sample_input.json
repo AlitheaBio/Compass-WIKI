@@ -1,0 +1,11 @@
+{
+  "data_source": [
+    {"id": 1, "value": "sample_1"},
+    {"id": 2, "value": "sample_2"},
+    {"id": 3, "value": "sample_3"}
+  ],
+  "options": {
+    "batch_size": 50,
+    "save_results": true
+  }
+}

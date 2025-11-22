@@ -1,0 +1,66 @@
+site_name: HLA-Compass SDK
+site_url: https://docs.alithea.bio/sdk/python
+repo_url: https://github.com/AlitheaBio/hla-compass-developer-kit
+repo_name: hla-compass-developer-kit
+edit_uri: ""
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: default
+      primary: teal
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: teal
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_root_heading: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+nav:
+  - Home: index.md
+  - SDK Reference:
+    - Overview: sdk-reference/index.md
+    - Getting Started: sdk-reference/guides/getting-started.md
+    - Authentication: sdk-reference/guides/authentication.md
+    - Module Development: sdk-reference/guides/module-development.md
+    - Testing: sdk-reference/guides/testing.md
+    - Publishing: sdk-reference/guides/publishing.md
+    - API:
+      - module: sdk-reference/reference/module.md
+      - client: sdk-reference/reference/client.md
+      - data: sdk-reference/reference/data.md
+      - auth: sdk-reference/reference/auth.md
+      - storage: sdk-reference/reference/storage.md
+      - testing: sdk-reference/reference/testing.md
+    - CLI: sdk-reference/reference/cli.md
+  - Module Development:
+    - Guide: module-development/README.md
+    - Templates: module-development/templates/README.md

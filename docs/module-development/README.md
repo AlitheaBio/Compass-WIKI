@@ -1,6 +1,6 @@
-# Alithea Bio Compass Wiki 
+# HLA-Compass Developer Kit
 
-Welcome to the official module developer resources for the Compass platform. This repository contains examples, templates, and guides to help you build, test, and publish modules.
+Welcome to the official developer resources for the HLA-Compass platform. This repository contains examples, templates, and guides to help you build, test, and publish modules.
 
 ## 📂 Structure
 

@@ -1,0 +1,75 @@
+{
+  "name": "module-name",
+  "version": "1.0.0",
+  "schemaVersion": "1.0",
+  "type": "with-ui",
+  "description": "Module with user interface",
+  "computeType": "docker",
+  "execution": {
+    "supports": ["interactive"],
+    "defaultMode": "interactive",
+    "entrypoint": "backend.main:UIModule",
+    "contextContract": "module-run-context-v1"
+  },
+  "resources": {
+    "memory": 512,
+    "timeout": 300,
+    "environment": {
+      "LOG_LEVEL": "INFO"
+    }
+  },
+  "pricing": {
+    "tiers": [
+      {
+        "tier": "developer",
+        "model": "usage-based",
+        "amountAct": 0.5
+      }
+    ]
+  },
+  "permissions": {
+    "network": [],
+    "storage": true,
+    "database": ["read"]
+  },
+  "dependencies": {
+    "api": true,
+    "storage": true,
+    "peptides": true
+  },
+  "ui": {
+    "framework": "react",
+    "buildCommand": "npm run build",
+    "distPath": "frontend/dist",
+    "bucket": "bucket",
+    "bundleKey": "bundle.js"
+  },
+  "inputs": {
+    "title": "Module Inputs",
+    "type": "object",
+    "required": ["param1"],
+    "properties": {
+      "param1": {
+        "type": "string",
+        "title": "Primary parameter",
+        "description": "User provided value exposed via the UI"
+      },
+      "param2": {
+        "type": "string",
+        "title": "Optional parameter",
+        "default": "default_value",
+        "description": "Defaults can be customized"
+      }
+    }
+  },
+  "outputs": {
+    "results": {
+      "type": "array",
+      "description": "Processed results for UI display"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics"
+    }
+  }
+}

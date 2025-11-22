@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "meta": {
+    "name": "Linear peptide workflow",
+    "description": "Simple prep -> persist flow used for smoke tests."
+  },
+  "environment": {
+    "name": "dev",
+    "region": "eu-central-1",
+    "workflowType": "STANDARD",
+    "roles": {
+      "stateMachineRoleArn": "arn:aws:iam::111111111111:role/hla-flow-dev",
+      "policies": [
+        {
+          "name": "orchestrator",
+          "actions": ["ecs:runtask", "iam:passrole", "states:startexecution"]
+        }
+      ]
+    },
+    "storage": {
+      "s3": {
+        "workingBucket": "hla-flow-dev-working",
+        "outputBucket": "hla-flow-dev-output",
+        "kmsKeyArn": "arn:aws:kms:eu-central-1:111111111111:key/12345678-aaaa-bbbb-cccc-123456789012",
+        "encryption": "KMS"
+      }
+    },
+    "ecs": {
+      "clusterArn": "arn:aws:ecs:eu-central-1:111111111111:cluster/hla-flow-dev-cluster",
+      "subnets": ["subnet-0123456789abcdef0", "subnet-0fedcba9876543210"],
+      "securityGroups": ["sg-0123456789abcdef0"],
+      "assignPublicIp": "DISABLED"
+    },
+    "network": {
+      "subnets": ["subnet-0123456789abcdef0"]
+    }
+  },
+  "modules": [
+    {
+      "id": "prep",
+      "name": "Prepare Input",
+      "version": "1.0.0",
+      "iamNeeds": ["ecs:runtask", "iam:passrole"]
+    },
+    {
+      "id": "persist",
+      "name": "Persist Results",
+      "iamNeeds": ["states:startexecution"]
+    }
+  ],
+  "graph": {
+    "start": "prep-node",
+    "nodes": [
+      {
+        "id": "prep-node",
+        "name": "Prepare Input",
+        "kind": "module(ecs)",
+        "moduleRef": "prep",
+        "runtime": {
+          "taskDefinitionArn": "arn:aws:ecs:eu-central-1:111111111111:task-definition/hla-flow-prep:3",
+          "clusterArn": "arn:aws:ecs:eu-central-1:111111111111:cluster/hla-flow-dev-cluster",
+          "subnets": ["subnet-0123456789abcdef0"],
+          "securityGroups": ["sg-0123456789abcdef0"],
+          "assignPublicIp": "DISABLED"
+        },
+        "io": {
+          "inputs": [
+            {
+              "name": "payload",
+              "binding": {
+                "kind": "artifact",
+                "source": "workingBucket"
+              }
+            }
+          ]
+        },
+        "parameters": {
+          "secrets": [
+            {
+              "name": "API_TOKEN",
+              "secretArn": "arn:aws:secretsmanager:eu-central-1:111111111111:secret:api-token"
+            }
+          ]
+        },
+        "next": "persist-node"
+      },
+      {
+        "id": "persist-node",
+        "name": "Persist Results",
+        "kind": "pass",
+        "end": true
+      }
+    ],
+    "edges": [
+      {
+        "source": "prep-node",
+        "target": "persist-node",
+        "default": true
+      }
+    ]
+  },
+  "simulation": {
+    "stateInput": {
+      "sample": "value"
+    }
+  },
+  "dataViews": []
+}

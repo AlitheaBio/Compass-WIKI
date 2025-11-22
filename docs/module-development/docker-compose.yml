@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hla-dev-postgres
+    restart: unless-stopped
+    env_file:
+      - .env.devkit
+    environment:
+      POSTGRES_USER: ${DEVKIT_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DEVKIT_DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DEVKIT_DB_NAME:-hla_compass}
+    ports:
+      - "${HLA_DEVKIT_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - devkit-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DEVKIT_DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-12-13T22-19-12Z
+    container_name: hla-dev-minio
+    restart: unless-stopped
+    env_file:
+      - .env.devkit
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${DEVKIT_S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${DEVKIT_S3_SECRET_KEY:-minioadmin}
+    ports:
+      - "${HLA_DEVKIT_MINIO_API_PORT:-9000}:9000"  # S3 API
+      - "${HLA_DEVKIT_MINIO_CONSOLE_PORT:-9001}:9001"  # Web Console
+    volumes:
+      - devkit-minio:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-stub:
+    build:
+      context: ..
+      dockerfile: devkit/api-stub.Dockerfile
+    container_name: hla-dev-api
+    restart: unless-stopped
+    env_file:
+      - .env.devkit
+    environment:
+      DEVKIT_DB_HOST: postgres
+      DEVKIT_DB_PORT: 5432
+      DEVKIT_MINIO_ENDPOINT: http://minio:9000
+      DEVKIT_MINIO_HEALTH: http://minio:9000/minio/health/ready
+      HLA_DEVKIT_API_PORT: ${HLA_DEVKIT_API_PORT:-4100}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    ports:
+      - "${HLA_DEVKIT_API_PORT:-4100}:4100"
+    volumes:
+      - ../docs/api:/app/docs/api:ro
+      - ../devkit/api_stub:/app/devkit/api_stub:ro
+      - devkit-api-state:/var/lib/devkit
+
+volumes:
+  devkit-postgres:
+  devkit-minio:
+  devkit-api-state:

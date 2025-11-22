@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "meta": {
+    "name": "Invalid flow - missing role"
+  },
+  "environment": {
+    "name": "dev",
+    "region": "eu-central-1",
+    "workflowType": "STANDARD",
+    "roles": {
+      "policies": [
+        {
+          "name": "orchestrator",
+          "actions": ["ecs:runtask"]
+        }
+      ]
+    },
+    "storage": {
+      "s3": {
+        "workingBucket": "hla-flow-dev-working",
+        "outputBucket": "hla-flow-dev-output"
+      }
+    },
+    "ecs": {
+      "clusterArn": "arn:aws:ecs:eu-central-1:111111111111:cluster/hla-flow-dev-cluster",
+      "subnets": ["subnet-0123456789abcdef0"],
+      "securityGroups": ["sg-0123456789abcdef0"],
+      "assignPublicIp": "DISABLED"
+    },
+    "network": {
+      "subnets": ["subnet-0123456789abcdef0"]
+    }
+  },
+  "modules": [
+    {
+      "id": "prep",
+      "name": "Prepare Input",
+      "iamNeeds": ["ecs:runtask"]
+    }
+  ],
+  "graph": {
+    "start": "prep",
+    "nodes": [
+      {
+        "id": "prep",
+        "name": "Prepare Input",
+        "kind": "module(ecs)",
+        "moduleRef": "prep",
+        "io": {
+          "inputs": [
+            {
+              "name": "payload",
+              "binding": {
+                "kind": "artifact",
+                "source": "workingBucket"
+              }
+            }
+          ]
+        },
+        "end": true
+      }
+    ]
+  }
+}

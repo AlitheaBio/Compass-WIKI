@@ -1,0 +1,6 @@
+{
+  "samples": ["sample-a", "sample-b"],
+  "options": {
+    "include_peptides": true
+  }
+}

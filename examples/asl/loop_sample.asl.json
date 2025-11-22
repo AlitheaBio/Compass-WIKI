@@ -1,0 +1,145 @@
+{
+  "StartAt": "Validate sample",
+  "States": {
+    "Finish": {
+      "Type": "Pass",
+      "End": true
+    },
+    "Invalid input": {
+      "Type": "Fail",
+      "Error": "InvalidInput",
+      "Cause": "Payload failed validation."
+    },
+    "Retry": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:eu-central-1:111111111111:cluster/hla-flow-dev",
+        "TaskDefinition": "arn:aws:ecs:eu-central-1:111111111111:task-definition/retry:1",
+        "NetworkConfiguration": {
+          "awsvpcConfiguration": {
+            "Subnets": [
+              "subnet-0123456789abcdef0"
+            ],
+            "SecurityGroups": [
+              "sg-0123456789abcdef0"
+            ],
+            "AssignPublicIp": "DISABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "module",
+              "Environment": [
+                {
+                  "Name": "HLA_COMPASS_RUN_ID",
+                  "Value.$": "$.runId"
+                },
+                {
+                  "Name": "HLA_COMPASS_FLOW_INPUT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/input.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_NODE_ID",
+                  "Value": "retry-node"
+                },
+                {
+                  "Name": "HLA_COMPASS_PAYLOAD_S3",
+                  "Value.$": "States.Format('s3://{}/{}/retry-node/payload.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_CONTEXT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/retry-node/context.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_OUTPUT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/retry-node/output.json', $.artifacts.outputBucket, $.artifacts.prefix)"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Next": "Retry gate"
+    },
+    "Retry gate": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "NumericLessThan": 3,
+          "Variable": "$.attempts",
+          "Next": "Retry"
+        }
+      ],
+      "Default": "Finish",
+      "Comment": "Choice node 'gate'"
+    },
+    "Validate sample__Choice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "BooleanEquals": false,
+          "Variable": "$.inputValid",
+          "Next": "Invalid input"
+        }
+      ],
+      "Default": "Retry gate"
+    },
+    "Validate sample": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:eu-central-1:111111111111:cluster/hla-flow-dev",
+        "TaskDefinition": "arn:aws:ecs:eu-central-1:111111111111:task-definition/ingest:1",
+        "NetworkConfiguration": {
+          "awsvpcConfiguration": {
+            "Subnets": [
+              "subnet-0123456789abcdef0"
+            ],
+            "SecurityGroups": [
+              "sg-0123456789abcdef0"
+            ],
+            "AssignPublicIp": "DISABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "module",
+              "Environment": [
+                {
+                  "Name": "HLA_COMPASS_RUN_ID",
+                  "Value.$": "$.runId"
+                },
+                {
+                  "Name": "HLA_COMPASS_FLOW_INPUT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/input.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_NODE_ID",
+                  "Value": "ingest"
+                },
+                {
+                  "Name": "HLA_COMPASS_PAYLOAD_S3",
+                  "Value.$": "States.Format('s3://{}/{}/ingest/payload.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_CONTEXT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/ingest/context.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_OUTPUT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/ingest/output.json', $.artifacts.outputBucket, $.artifacts.prefix)"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Next": "Validate sample__Choice"
+    }
+  }
+}

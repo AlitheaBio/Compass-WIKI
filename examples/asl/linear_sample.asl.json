@@ -1,0 +1,63 @@
+{
+  "StartAt": "Prepare Input",
+  "States": {
+    "Persist Results": {
+      "Type": "Pass",
+      "End": true
+    },
+    "Prepare Input": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask.sync",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "arn:aws:ecs:eu-central-1:111111111111:cluster/hla-flow-dev-cluster",
+        "TaskDefinition": "arn:aws:ecs:eu-central-1:111111111111:task-definition/hla-flow-prep:3",
+        "NetworkConfiguration": {
+          "awsvpcConfiguration": {
+            "Subnets": [
+              "subnet-0123456789abcdef0"
+            ],
+            "SecurityGroups": [
+              "sg-0123456789abcdef0"
+            ],
+            "AssignPublicIp": "DISABLED"
+          }
+        },
+        "Overrides": {
+          "ContainerOverrides": [
+            {
+              "Name": "module",
+              "Environment": [
+                {
+                  "Name": "HLA_COMPASS_RUN_ID",
+                  "Value.$": "$.runId"
+                },
+                {
+                  "Name": "HLA_COMPASS_FLOW_INPUT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/input.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_NODE_ID",
+                  "Value": "prep-node"
+                },
+                {
+                  "Name": "HLA_COMPASS_PAYLOAD_S3",
+                  "Value.$": "States.Format('s3://{}/{}/prep-node/payload.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_CONTEXT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/prep-node/context.json', $.artifacts.workingBucket, $.artifacts.prefix)"
+                },
+                {
+                  "Name": "HLA_COMPASS_OUTPUT_S3",
+                  "Value.$": "States.Format('s3://{}/{}/prep-node/output.json', $.artifacts.outputBucket, $.artifacts.prefix)"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Next": "Persist Results"
+    }
+  }
+}
