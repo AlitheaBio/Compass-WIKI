@@ -1,7 +1,7 @@
 site_name: HLA-Compass SDK
 site_url: https://docs.alithea.bio/sdk/python
-repo_url: https://github.com/AlitheaBio/hla-compass-developer-kit
-repo_name: hla-compass-developer-kit
+repo_url: https://github.com/AlitheaBio/Compass-WIKI
+repo_name: Compass-WIKI
 edit_uri: ""
 
 theme:
