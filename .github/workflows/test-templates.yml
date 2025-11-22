@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-examples:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Platform SDK
+        run: |
+          pip install --upgrade pip
+          # If hla-compass is not yet on PyPI, comment this out or use a local wheel
+          # pip install hla-compass 
+          
+          # For now, we install requirements directly from examples to test dependency validity
+      
+      - name: Test "Golden No-UI" Example
+        working-directory: examples/modules/golden_no_ui
+        run: |
+          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+          # Basic syntax check
+          python -m py_compile backend/main.py
+
+      - name: Test "Golden With-UI" Example
+        working-directory: examples/modules/golden_with_ui
+        run: |
+          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+          # Basic syntax check
+          python -m py_compile backend/main.py
