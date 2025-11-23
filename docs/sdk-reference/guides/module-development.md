@@ -43,7 +43,13 @@ class MyAnalyzer(Module):
         sequence = input_data.get("sequence")
         
         # Access data
-        peptides = self.peptides.search(sequence=sequence)
+        # OLD: peptides = self.peptides.search(sequence=sequence)
+        # NEW: Use scoped SQL access
+        result = self.data.sql.query(
+            "SELECT sequence, mass FROM peptides WHERE sequence = %s",
+            params=[sequence]
+        )
+        peptides = result["data"]
         
         # Return results
         return self.success(results=peptides)
