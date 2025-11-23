@@ -49,6 +49,7 @@ nav:
   - SDK Reference:
     - Overview: sdk-reference/index.md
     - Getting Started: sdk-reference/guides/getting-started.md
+    - Data Access: sdk-reference/guides/data-access.md
     - Authentication: sdk-reference/guides/authentication.md
     - Module Development: sdk-reference/guides/module-development.md
     - Testing: sdk-reference/guides/testing.md
