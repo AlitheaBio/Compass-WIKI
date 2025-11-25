@@ -19,7 +19,9 @@ client = DataClient(provider="alithea-bio", catalog="immunopeptidomics")
 
 ## SQLClient
 
-Execute SQL queries and discover schema for the Catalog.
+Execute SQL queries against the Catalog.
+
+For available tables and columns, see the [Data Catalog Reference](data-catalog.md).
 
 ### `query(sql, params=None)`
 
@@ -27,8 +29,8 @@ Execute a raw SQL query.
 
 **Arguments:**
 
-*   `sql` (str): SQL query string (e.g., `SELECT * FROM peptides WHERE sequence = %s`)
-*   `params` (list): List of parameters to safely bind to the query
+*   `sql` (str): SQL query string with `%s` placeholders for parameters
+*   `params` (list): List of parameter values to safely bind
 
 **Returns:**
 
@@ -37,72 +39,14 @@ Execute a raw SQL query.
     *   `data` (list[dict]): Rows as dictionaries
     *   `count` (int): Number of rows
 
-### `schema(refresh=False)`
-
-Get the full schema for this catalog (tables and columns you have access to).
-
-**Arguments:**
-
-*   `refresh` (bool): Force refresh the cached schema
-
-**Returns:**
-
-*   `dict`: Schema with `tables` list containing table metadata
+**Example:**
 
 ```python
-schema = self.data.sql.schema()
-# {"tables": [{"name": "peptides", "columns": [...], ...}, ...]}
-```
-
-### `tables()`
-
-Get list of table names available in this catalog.
-
-**Returns:**
-
-*   `list[str]`: Table names
-
-```python
-tables = self.data.sql.tables()
-# ['peptides', 'proteins', 'samples']
-```
-
-### `columns(table)`
-
-Get column information for a specific table.
-
-**Arguments:**
-
-*   `table` (str): Table name
-
-**Returns:**
-
-*   `list[dict]`: Column definitions with `name`, `type`, `description`
-
-```python
-cols = self.data.sql.columns("peptides")
-# [{"name": "id", "type": "uuid"}, {"name": "sequence", "type": "text"}, ...]
-```
-
-### `describe(table=None)`
-
-Get a human-readable description of the schema or a specific table.
-
-**Arguments:**
-
-*   `table` (str, optional): Table name. If None, describes all tables.
-
-**Returns:**
-
-*   `str`: Formatted description
-
-```python
-print(self.data.sql.describe("peptides"))
-# Table: peptides
-# Columns:
-#   - id (uuid)
-#   - sequence (text)
-#   ...
+result = self.data.sql.query(
+    "SELECT sequence, mass FROM peptides WHERE length >= %s LIMIT 10",
+    params=[8]
+)
+print(result["data"])
 ```
 
 ---

@@ -47,36 +47,18 @@ if __name__ == "__main__":
 
 ## Data Access Patterns
 
-### Schema Discovery (Start Here!)
+### Available Tables (Immunopeptidomics Catalog)
 
-Before writing queries, discover what's available:
+The default catalog provides these tables:
 
-```python
-def execute(self, input_data: Input, context):
-    # List all tables you can access
-    tables = self.data.sql.tables()
-    # ['peptides', 'proteins', 'samples', ...]
-    
-    # Get columns for a specific table
-    cols = self.data.sql.columns("peptides")
-    # [{"name": "id", "type": "uuid"}, {"name": "sequence", "type": "text"}, ...]
-    
-    # Human-readable description (great for debugging)
-    print(self.data.sql.describe("peptides"))
-    # Table: peptides
-    # Columns:
-    #   - id (uuid)
-    #   - sequence (text)
-    #   ...
-```
+| Table | Key Columns | Description |
+|-------|-------------|-------------|
+| `peptides` | id, sequence, mass, length | Peptide sequences with mass spectrometry data |
+| `proteins` | id, accession, sequence, name | Source protein sequences |
+| `samples` | id, name, tissue, condition | Sample metadata and experimental conditions |
+| `hla_alleles` | id, name, supertype | HLA allele reference data |
 
-CLI commands:
-```bash
-hla-compass data tables                    # List tables
-hla-compass data schema                    # Full schema
-hla-compass data schema --table peptides   # Single table
-hla-compass data schema --format json      # JSON for LLM context
-```
+For complete column details, see the [Data Catalog Reference](sdk-reference/reference/data-catalog.md).
 
 ### SQL Queries (Row-Level Security Applied Automatically)
 

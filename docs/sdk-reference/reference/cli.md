@@ -138,49 +138,6 @@ hla-compass publish --env dev --image-ref my-module:1.0.0
 
 ---
 
-## Data Commands
-
-### `data tables`
-
-List available tables in a catalog.
-
-```bash
-hla-compass data tables [--catalog NAME]
-```
-
-**Options:**
-
-* `--catalog`: Catalog name (default: `immunopeptidomics`)
-
-### `data schema`
-
-Show database schema (tables, columns, types).
-
-```bash
-hla-compass data schema [options]
-```
-
-**Options:**
-
-* `--catalog`: Catalog name (default: `immunopeptidomics`)
-* `--table, -t`: Specific table to describe
-* `--format text|json`: Output format (default: `text`)
-
-**Examples:**
-
-```bash
-# Show all tables
-hla-compass data schema
-
-# Describe specific table
-hla-compass data schema --table peptides
-
-# JSON output (useful for LLM context)
-hla-compass data schema --format json
-```
-
----
-
 ## Utilities
 
 ### `doctor`
