@@ -6,6 +6,45 @@ The HLA-Compass platform provides a unified "Scoped Vending Machine" model for d
 
 Modules access data through the `self.data` helper, which is an instance of `DataClient`. This client is scoped to a specific **Provider** and **Catalog** (defaulting to `alithea-bio/immunopeptidomics`).
 
+## Schema Discovery
+
+Before writing queries, discover what tables and columns are available:
+
+### CLI
+
+```bash
+# List all tables you have access to
+hla-compass data tables
+
+# Describe all tables with columns
+hla-compass data schema
+
+# Describe a specific table
+hla-compass data schema --table peptides
+
+# Get JSON output (useful for LLM context)
+hla-compass data schema --format json
+```
+
+### In Code
+
+```python
+def execute(self, input_data, context):
+    # List available tables
+    tables = self.data.sql.tables()
+    print(tables)  # ['peptides', 'proteins', 'samples', ...]
+    
+    # Get column info for a table
+    cols = self.data.sql.columns("peptides")
+    for col in cols:
+        print(f"{col['name']}: {col['type']}")
+    
+    # Human-readable description (great for debugging)
+    print(self.data.sql.describe("peptides"))
+```
+
+> **Security Note**: Schema discovery only returns metadata for tables your organization has permission to access. No actual data is exposed.
+
 ## SQL Access
 
 Execute raw SQL queries against the catalog's schema. The platform automatically enforces Row-Level Security (RLS) so you only see data your organization is authorized to access.
@@ -24,9 +63,11 @@ result = self.data.sql.query(
 ```
 
 ### Best Practices
+
 *   **Read-Only**: Queries are strictly read-only.
 *   **Scoping**: You don't need to filter by `organization_id`; the DB does it for you.
 *   **Parameters**: Never concatenate strings into SQL. Use the `params` list to prevent injection.
+*   **Discovery First**: Use `self.data.sql.tables()` and `self.data.sql.describe()` to explore before writing queries.
 
 ## Storage Access
 

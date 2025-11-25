@@ -46,11 +46,36 @@ pytest
 
 The SDK provides `MockContext` and `MockAPI` to help you test without connecting to the real platform.
 
+### Mocking Data Access
+
+Since modules use the generic `DataClient`, you can easily mock SQL queries and API responses:
+
 ```python
 from hla_compass.testing import ModuleTester, MockContext
 
-def test_my_logic():
+def test_with_mock_data():
+    # 1. Setup Mock Context
+    context = MockContext.create()
+    
+    # 2. Register a mock response for a SQL query
+    # Matches any POST request to a path containing "query"
+    context.api.add_response(
+        method="POST", 
+        path_pattern="query", 
+        response={
+            "columns": ["sequence", "mass"],
+            "data": [
+                {"sequence": "MOCKED_SEQ", "mass": 1000.0}
+            ],
+            "count": 1
+        }
+    )
+    
+    # 3. Run Module
     tester = ModuleTester()
-    result = tester.test_local("backend/main.py", {"input": "val"}, MockContext.create())
+    # The module will receive our mock data when it calls self.data.sql.query()
+    result = tester.test_local("backend/main.py", {"input": "val"}, context)
+    
     assert result["status"] == "success"
+    assert result["results"][0]["sequence"] == "MOCKED_SEQ"
 ```

@@ -46,22 +46,19 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - SDK Reference:
-    - Overview: sdk-reference/index.md
-    - Getting Started: sdk-reference/guides/getting-started.md
+  - Quickstart: quickstart.md
+  - Guides:
     - Data Access: sdk-reference/guides/data-access.md
-    - Authentication: sdk-reference/guides/authentication.md
-    - Module Development: sdk-reference/guides/module-development.md
     - Testing: sdk-reference/guides/testing.md
+    - Module Development: sdk-reference/guides/module-development.md
+    - Authentication: sdk-reference/guides/authentication.md
     - Publishing: sdk-reference/guides/publishing.md
-    - API:
-      - module: sdk-reference/reference/module.md
-      - client: sdk-reference/reference/client.md
-      - data: sdk-reference/reference/data.md
-      - auth: sdk-reference/reference/auth.md
-      - storage: sdk-reference/reference/storage.md
-      - testing: sdk-reference/reference/testing.md
-    - CLI: sdk-reference/reference/cli.md
-  - Module Development:
-    - Guide: module-development/README.md
-    - Templates: module-development/templates/README.md
+  - Reference:
+    - CLI Commands: sdk-reference/reference/cli.md
+    - Module API: sdk-reference/reference/module.md
+    - Data API: sdk-reference/reference/data.md
+    - Storage API: sdk-reference/reference/storage.md
+    - Testing API: sdk-reference/reference/testing.md
+  - LLM Context: llm-context.md
+  - Examples:
+    - Overview: module-development/README.md
