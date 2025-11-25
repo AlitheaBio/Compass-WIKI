@@ -124,10 +124,10 @@ hla-compass publish --env dev
 
 | Guide | Description |
 |-------|-------------|
-| [Data Access](guides/data-access.md) | SQL queries, storage, working with large files |
-| [Testing](guides/testing.md) | Unit tests, mocking, CI/CD integration |
-| [UI Modules](guides/ui-modules.md) | Adding a React frontend |
-| [Publishing](guides/publishing.md) | Versioning, pricing, permissions |
+| [Data Access](sdk-reference/guides/data-access.md) | SQL queries, storage, working with large files |
+| [Testing](sdk-reference/guides/testing.md) | Unit tests, mocking, CI/CD integration |
+| [UI Modules](sdk-reference/guides/module-development.md) | Adding a React frontend |
+| [Publishing](sdk-reference/guides/publishing.md) | Versioning, pricing, permissions |
 
 ---
 
