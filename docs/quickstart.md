@@ -106,9 +106,17 @@ print(result)
 When ready to share your module:
 
 ```bash
-hla-compass build --tag my-analysis:1.0.0
-hla-compass publish --env dev --image-ref my-analysis:1.0.0
+# Build the container image
+hla-compass build --tag ghcr.io/your-org/my-analysis:1.0.0
+
+# Push to GitHub Container Registry
+docker push ghcr.io/your-org/my-analysis:1.0.0
+
+# Register with the platform
+hla-compass publish --env dev
 ```
+
+> **Note:** Your organization must have GHCR configured in the platform. See the [Publishing Guide](sdk-reference/guides/publishing.md) for details.
 
 ---
 

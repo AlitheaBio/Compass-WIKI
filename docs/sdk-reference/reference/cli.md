@@ -119,22 +119,43 @@ hla-compass build [options]
 
 **Options:**
 
-* `--tag TAG`: Image tag (e.g., `my-module:1.0.0`)
-* `--push`: Push to registry after build
-
-### `publish`
-
-Publish module to the platform (builds, signs, and registers).
-
-```bash
-hla-compass publish --env ENV --image-ref IMAGE
-```
+* `--tag TAG`: Full image tag including registry (e.g., `ghcr.io/org/module:1.0.0`)
+* `--push`: Push to registry after build (requires docker login)
 
 **Example:**
 
 ```bash
-hla-compass publish --env dev --image-ref my-module:1.0.0
+hla-compass build --tag ghcr.io/your-org/my-module:1.0.0
 ```
+
+### `publish`
+
+Register a built module with the platform.
+
+```bash
+hla-compass publish [options]
+```
+
+**Options:**
+
+* `--env ENV`: Target environment (`dev`, `staging`, `prod`)
+* `--image-ref IMAGE`: Image reference (auto-detected from manifest if not provided)
+* `--visibility LEVEL`: Module visibility (`private`, `org`, `public`)
+
+**Example workflow:**
+
+```bash
+# 1. Build the image
+hla-compass build --tag ghcr.io/your-org/my-module:1.0.0
+
+# 2. Push to registry
+docker push ghcr.io/your-org/my-module:1.0.0
+
+# 3. Register with platform
+hla-compass publish --env dev
+```
+
+> **Note:** Your organization must have the container registry namespace configured in the platform allowlist.
 
 ---
 
