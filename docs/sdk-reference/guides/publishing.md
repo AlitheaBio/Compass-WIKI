@@ -129,11 +129,12 @@ Modules are **immutable** - once published, a version cannot be changed. To upda
 
 Your organization's registry configuration doesn't include the image namespace. Contact your platform admin.
 
-### "Image not found"
+### "Image not found" or "Forbidden"
 
 Ensure:
 1. The image was pushed successfully: `docker manifest inspect ghcr.io/your-org/module:tag`
 2. You're logged into the registry: `docker login ghcr.io`
+3. If pushing to GHCR, ensure your token has `write:packages` scope.
 
 ### "Module publish requires developer access"
 

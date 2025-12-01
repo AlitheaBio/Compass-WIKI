@@ -174,7 +174,7 @@ hla-compass doctor
 ```text
 HLA-Compass SDK v2.0.0
 Python: 3.11.0
-Docker: ✓ Available
+Docker: ✓ Available (Daemon running)
 Node:   ✓ Available
 Git:    ✓ Available
 

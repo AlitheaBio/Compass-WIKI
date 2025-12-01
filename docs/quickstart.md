@@ -24,6 +24,8 @@ hla-compass init my-analysis --interactive
 cd my-analysis
 ```
 
+> **Note:** Module names must use **kebab-case** (lowercase alphanumeric with hyphens, e.g., `my-analysis`). Underscores (`my_analysis`) are not allowed.
+
 The wizard asks a few questions and scaffolds your project.
 
 ## 3. Write Your Logic
@@ -105,16 +107,24 @@ print(result)
 
 When ready to share your module:
 
-```bash
-# Build the container image
-hla-compass build --tag ghcr.io/your-org/my-analysis:1.0.0
+1. **Login to your registry** (e.g., GHCR):
+   ```bash
+   echo $GITHUB_TOKEN | docker login ghcr.io -u YOUR_USERNAME --password-stdin
+   ```
 
-# Push to GitHub Container Registry
-docker push ghcr.io/your-org/my-analysis:1.0.0
+2. **Build and Push**:
+   ```bash
+   # Build the container image
+   hla-compass build --tag ghcr.io/your-org/my-analysis:1.0.0
+   
+   # Push to GitHub Container Registry
+   docker push ghcr.io/your-org/my-analysis:1.0.0
+   ```
 
-# Register with the platform
-hla-compass publish --env dev
-```
+3. **Register with the platform**:
+   ```bash
+   hla-compass publish --env dev
+   ```
 
 > **Note:** Your organization must have GHCR configured in the platform. See the [Publishing Guide](sdk-reference/guides/publishing.md) for details.
 
