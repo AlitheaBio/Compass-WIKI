@@ -7,7 +7,7 @@ The HLA-Compass SDK requires authentication to interact with the platform API (u
 The easiest way to log in is using the browser-based Single Sign-On (SSO).
 
 ```bash
-hla-compass auth login
+hla-compass auth login --env dev
 ```
 
 **How it works:**
@@ -15,17 +15,17 @@ hla-compass auth login
 2.  It opens your default browser to the HLA-Compass login page.
 3.  You log in with your credentials (or via your organization's IdP).
 4.  The browser redirects back to your local CLI with a secure token.
-5.  The CLI saves the credentials to `~/.hla-compass/credentials.json`.
+5.  The CLI stores credentials in your OS keyring when available, otherwise in an encrypted file under `~/.hla-compass/`.
 
-## Interactive Prompt
+## Non-browser login (automation)
 
-If you are on a headless machine or prefer not to use the browser, you can force an interactive prompt:
+If you are on a headless machine or need automation, you can authenticate without opening a browser:
 
 ```bash
-hla-compass auth login --interactive
+hla-compass auth login --env dev --email you@example.com --password-stdin
 ```
 
-You will be prompted to enter your email and password directly in the terminal.
+This reads the password from stdin (avoids leaking it into shell history).
 
 ## Environment Variables (CI/CD)
 

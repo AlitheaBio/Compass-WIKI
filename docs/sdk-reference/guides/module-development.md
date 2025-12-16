@@ -24,8 +24,10 @@ my-module/
 │   ├── main.py          # Entry point (Module class)
 │   └── requirements.txt # Python dependencies
 ├── frontend/            # (UI modules only)
-│   ├── src/
-│   └── package.json
+│   ├── index.tsx        # UI entrypoint (exports ModuleUI)
+│   ├── webpack.config.js
+│   ├── package.json
+│   └── src/             # Shared UI helpers (optional)
 └── examples/
     └── sample_input.json # Test payload
 ```
@@ -78,7 +80,7 @@ class MyModule(Module):
     # ...
 ```
 
-Run `MyModule().sync_manifest()` locally to update `manifest.json` schema.
+Run `MyModule().sync_manifest()` locally (Python API) to update the `manifest.json` `inputs` schema.
 
 ## Hybrid Runtime
 

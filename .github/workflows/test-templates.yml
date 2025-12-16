@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test-examples:
+  validate-modules:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,24 +21,45 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Platform SDK
+      - name: Install SDK
         run: |
-          pip install --upgrade pip
-          # If hla-compass is not yet on PyPI, comment this out or use a local wheel
-          # pip install hla-compass 
-          
-          # For now, we install requirements directly from examples to test dependency validity
-      
-      - name: Test "Golden No-UI" Example
-        working-directory: examples/modules/golden_no_ui
-        run: |
-          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
-          # Basic syntax check
-          python -m py_compile backend/main.py
+          python -m pip install --upgrade pip
+          pip install hla-compass==2.0.3
 
-      - name: Test "Golden With-UI" Example
-        working-directory: examples/modules/golden_with_ui
+      - name: Validate templates and examples
+        shell: bash
         run: |
-          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
-          # Basic syntax check
-          python -m py_compile backend/main.py
+          set -euo pipefail
+          MODULE_DIRS=(
+            templates/no-ui-template
+            templates/ui-template
+            examples/modules/golden_no_ui
+            examples/modules/golden_with_ui
+            docs/module-development/templates/no-ui-template
+            docs/module-development/templates/ui-template
+            docs/module-development/examples/modules/golden_no_ui
+            docs/module-development/examples/modules/golden_with_ui
+          )
+
+          for dir in "${MODULE_DIRS[@]}"; do
+            echo "Validating: ${dir}"
+            (cd "${dir}" && hla-compass validate --strict)
+          done
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install docs dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs-material mkdocstrings[python] hla-compass==2.0.3
+
+      - name: Build docs
+        run: mkdocs build

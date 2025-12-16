@@ -3,24 +3,27 @@
   "name": "module-name",
   "version": "1.0.0",
   "type": "no-ui",
-  "computeType": "docker",
+  "computeType": "fargate",
   "description": "Backend-only module for data processing",
   "execution": {
     "entrypoint": "backend.main:NoUIModule",
-    "supports": ["interactive", "workflow"],
-    "defaultMode": "interactive",
-    "contextContract": "module-run-context-v1"
+    "supports": [
+      "interactive",
+      "workflow"
+    ],
+    "defaultMode": "interactive"
   },
   "author": {
     "name": "Developer Name",
     "email": "developer@example.com",
     "organization": "Organization"
   },
-  "runtime": "python3.11",
   "inputs": {
     "type": "object",
     "title": "Module Inputs",
-    "required": ["data_source"],
+    "required": [
+      "data_source"
+    ],
     "properties": {
       "data_source": {
         "type": "array",
@@ -53,13 +56,19 @@
   },
   "resources": {
     "memory": 512,
-    "timeout": 300,
+    "timeout": 180,
     "environment": {
       "LOG_LEVEL": "INFO"
     }
   },
+  "metadata": {
+    "exposedParameters": [],
+    "auditLog": true
+  },
   "permissions": {
-    "database": ["read"],
+    "database": [
+      "read"
+    ],
     "storage": true,
     "network": []
   },
@@ -71,10 +80,5 @@
         "amountAct": 0.25
       }
     ]
-  },
-  "dependencies": {
-    "peptides": true,
-    "storage": true,
-    "api": true
   }
 }

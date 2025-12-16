@@ -1,64 +1,74 @@
-"""Golden path backend module used for SDK smoke tests."""
+"""
+Golden Path Module - Reference implementation for SDK smoke tests.
+
+This module demonstrates the recommended Pydantic-first pattern for defining
+module inputs. Keep the `manifest.json` inputs schema in sync with the `Input`
+model; the CLI validates the manifest but does not auto-generate it today.
+"""
 
 from __future__ import annotations
 
-import os
-from typing import Any, Dict, List
+from typing import List, Optional
+from pydantic import BaseModel, Field
 
 from hla_compass import Module
 
 
-def _resolve_org_id(context: Dict[str, Any]) -> str:
-    org_block = context.get("organization")
-    return (
-        context.get("organization_id")
-        or context.get("organizationId")
-        or (org_block or {}).get("id")
-        or "org-unknown"
+class Options(BaseModel):
+    """Nested options for the analysis."""
+    include_peptides: bool = Field(
+        default=True,
+        description="Include mock peptide annotations in output"
     )
 
 
-def _resolve_run_id(context: Dict[str, Any]) -> str:
-    return (
-        context.get("run_id")
-        or context.get("job_id")
-        or context.get("runId")
-        or "local-run"
+class Input(BaseModel):
+    """
+    Input schema for the Golden No-UI Module.
+    
+    This Pydantic model defines all inputs for runtime validation and typing.
+    Keep the `manifest.json` inputs schema aligned with this class.
+    """
+    samples: List[str] = Field(
+        description="List of sample identifiers to summarize",
+        min_length=1
     )
-
-
-def _resolve_environment(context: Dict[str, Any]) -> str:
-    return (
-        context.get("environment")
-        or context.get("env")
-        or os.getenv("HLA_COMPASS_ENV")
-        or os.getenv("HLA_ENV")
-        or "unknown"
+    options: Optional[Options] = Field(
+        default_factory=Options,
+        description="Optional analysis settings"
     )
 
 
 class GoldenNoUIModule(Module):
-    """Reference implementation that echoes summary statistics."""
+    """
+    Reference implementation demonstrating Pydantic-first module development.
+    
+    Key features demonstrated:
+    - Pydantic Input model for typed, validated inputs
+    - Context properties (self.run_id, self.organization_id, etc.)
+    - Structured logging with self.logger
+    - Standard success() response format
+    """
+    
+    Input = Input
 
-    def execute(self, input_data: Dict[str, Any], context: Any) -> Dict[str, Any]:
-        samples: List[str] = input_data.get("samples", [])
-        include_peptides = input_data.get("options", {}).get("include_peptides", True)
+    def execute(self, input_data: Input, context) -> dict:
+        # input_data is a validated Pydantic model with full type hints
+        samples = input_data.samples
+        include_peptides = input_data.options.include_peptides if input_data.options else True
 
-        run_id = _resolve_run_id(context)
+        # Use built-in context properties (no manual resolution needed)
         self.logger.info(
-            "golden-no-ui module invoked", extra={"samples": len(samples), "run_id": run_id}
+            "golden-no-ui module invoked",
+            extra={"sample_count": len(samples), "run_id": self.run_id}
         )
 
-        org_id = _resolve_org_id(context)
-        environment = _resolve_environment(context)
-
         payload = {
-            "run_id": run_id,
-            "organization_id": org_id,
+            "run_id": self.run_id,
+            "organization_id": self.organization_id,
+            "environment": self.environment,
             "sample_count": len(samples),
             "samples": samples,
-            "requested_at": context.get("requested_at"),
-            "environment": environment,
         }
 
         if include_peptides:
@@ -67,9 +77,17 @@ class GoldenNoUIModule(Module):
                 {"id": "pep-002", "sequence": "MLLSVPLLL"},
             ]
 
-        summary = {
-            "samples": len(samples),
-            "include_peptides": include_peptides,
-        }
+        return self.success(
+            results=payload,
+            summary={
+                "samples": len(samples),
+                "include_peptides": include_peptides,
+            }
+        )
 
-        return self.success(results=payload, summary=summary)
+
+if __name__ == "__main__":
+    # Quick local test
+    from hla_compass.testing import ModuleTester
+    result = ModuleTester().quickstart(GoldenNoUIModule)
+    print(result)

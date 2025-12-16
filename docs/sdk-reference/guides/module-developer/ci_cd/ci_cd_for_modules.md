@@ -20,7 +20,14 @@ name: Module – Build & Push (GHCR)
 on:
   push:
     tags: ['v*']
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to HLA-Compass after pushing the image
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
 
 permissions:
   contents: read
@@ -39,10 +46,10 @@ jobs:
       - name: Install SDK
         run: |
           python -m pip install --upgrade pip
-          pip install hla-compass
+          pip install hla-compass==2.0.3
 
       - name: Validate module
-        run: hla-compass validate-module --strict
+        run: hla-compass validate --strict
 
       - name: Derive version and image ref
         id: meta
@@ -72,7 +79,7 @@ jobs:
         env:
           HLA_ACCESS_TOKEN: ${{ secrets.HLA_ACCESS_TOKEN }}
         run: |
-          hla-compass publish --env dev --image-ref "${{ steps.meta.outputs.image }}"
+          hla-compass publish --env dev --scope org --generate-keys --image-ref "${{ steps.meta.outputs.image }}"
 ```
 
 Tips:
@@ -84,7 +91,7 @@ Tips:
 1. Login to GHCR locally: `echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin`.
 2. Build via SDK: `hla-compass build --tag ghcr.io/<org>/<module>:1.0.0`.
 3. Push with Docker CLI.
-4. Publish: `hla-compass publish --env dev --image-ref ghcr.io/<org>/<module>:1.0.0 [--visibility organization --org-id <UUID>]`.
+4. Publish: `hla-compass publish --env dev --scope org --generate-keys --image-ref ghcr.io/<org>/<module>:1.0.0`.
 
 This flow is useful when experimenting or before CI pipelines exist. Once stabilized, prefer Flow A so reproducible artefacts ship from CI.
 
@@ -104,5 +111,5 @@ This flow is useful when experimenting or before CI pipelines exist. Once stabil
 
 ## 6. References
 - [Module developer handbook](../handbook.md)
-- [Publish-by-image API spec](../../../../wiki/components/api/specs/MODULES_PUBLISH_BY_IMAGE.md)
-- [Architecture storage topology](../../../../wiki/components/infrastructure/architecture/storage_topology.md)
+- [Publishing](../../publishing.md)
+- [CLI Commands](../../../reference/cli.md)

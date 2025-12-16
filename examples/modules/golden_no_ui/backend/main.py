@@ -2,7 +2,8 @@
 Golden Path Module - Reference implementation for SDK smoke tests.
 
 This module demonstrates the recommended Pydantic-first pattern for defining
-module inputs. The manifest.json schema is auto-generated from the Input model.
+module inputs. Keep the `manifest.json` inputs schema in sync with the `Input`
+model; the CLI validates the manifest but does not auto-generate it today.
 """
 
 from __future__ import annotations
@@ -25,8 +26,8 @@ class Input(BaseModel):
     """
     Input schema for the Golden No-UI Module.
     
-    This Pydantic model defines all inputs. The SDK auto-generates
-    the manifest.json schema from this class via `hla-compass preflight`.
+    This Pydantic model defines all inputs for runtime validation and typing.
+    Keep the `manifest.json` inputs schema aligned with this class.
     """
     samples: List[str] = Field(
         description="List of sample identifiers to summarize",

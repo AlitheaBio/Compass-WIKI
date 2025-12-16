@@ -9,21 +9,20 @@
     "test": "jest"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "antd": "^5.22.6",
     "@ant-design/icons": "^6.0.1",
     "clsx": "^2.1.1",
-    "recharts": "^2.12.7",
+    "recharts": "^3.1.2",
     "react-plotly.js": "^2.6.0",
-    "plotly.js": "^2.32.0"
+    "plotly.js": "^3.0.1"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.7",
-    "@types/plotly.js": "^2.29.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/plotly.js": "^3.0.6",
     "@types/react-plotly.js": "^2.6.3",
-    "@types/recharts": "^2.0.0",
     "typescript": "~5.3.3",
     "webpack": "^5.88.0",
     "webpack-cli": "^5.1.0",

@@ -4,7 +4,7 @@ This guide gets you from zero to a working module as fast as possible.
 
 ## Prerequisites
 
-- Python 3.9+ 
+- Python 3.10+
 - Docker Desktop running
 - Platform account (sign up at [compass.alithea.bio](https://compass.alithea.bio))
 
@@ -12,7 +12,7 @@ This guide gets you from zero to a working module as fast as possible.
 
 ```bash
 pip install hla-compass
-hla-compass auth login
+hla-compass auth login --env dev
 ```
 
 A browser window opens for authentication. Once complete, you're ready to build.
@@ -37,7 +37,7 @@ from pydantic import BaseModel, Field
 from hla_compass import Module
 
 class Input(BaseModel):
-    """Define your inputs here. This becomes your manifest schema."""
+    """Define your inputs here (typed + validated at runtime)."""
     sequence: str = Field(description="Peptide sequence to analyze")
     min_length: int = Field(default=8, ge=1, le=50, description="Minimum length filter")
 
@@ -66,15 +66,28 @@ class PeptideAnalyzer(Module):
 - `self.data.sql.query()` runs SQL against the platform database
 - `self.success()` formats your output
 
-## 4. Generate Manifest
+## 4. Validate (and optionally sync the manifest)
 
-Your `manifest.json` is auto-generated from your Pydantic model:
+Validate your module (manifest schema + structure):
 
 ```bash
-hla-compass preflight
+hla-compass validate --strict
 ```
 
-This validates your module and updates `manifest.json` with the schema from your `Input` class.
+If you use a Pydantic `Input` model and want to sync the `manifest.json` `inputs` schema from code, run:
+
+```bash
+python - <<'PY'
+import importlib.util
+
+spec = importlib.util.spec_from_file_location("backend_main", "backend/main.py")
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)  # type: ignore[union-attr]
+
+module.PeptideAnalyzer().sync_manifest()
+PY
+hla-compass validate --strict
+```
 
 ## 5. Run Locally
 

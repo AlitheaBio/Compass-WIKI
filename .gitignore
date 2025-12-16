@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# MkDocs
+site/
+
+# Local env (avoid leaking secrets)
+.env
+.env.*
+!.env.example
+!.env.*.example

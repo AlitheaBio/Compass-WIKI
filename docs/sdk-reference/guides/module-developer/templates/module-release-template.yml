@@ -1,74 +1,80 @@
-# Example GitHub Actions workflow for building, scanning, and publishing an HLA-Compass module.
-# Customize IMAGE_REPO and ENVIRONMENT variables for your organization.
+# Example GitHub Actions workflow for building, pushing, and (optionally) publishing an HLA-Compass module.
+#
+# Required secrets:
+# - HLA_ACCESS_TOKEN: platform access token for publishing (only needed if you enable the publish step)
+#
+# Notes:
+# - Uses GHCR by default (no AWS required).
+# - Publish is opt-in via workflow_dispatch input.
 
-name: Module Release
+name: Module Release (GHCR)
 
 on:
   push:
-    tags:
-      - 'v*'
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to HLA-Compass after pushing the image
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
+      environment:
+        description: Target platform environment
+        required: true
+        default: dev
+        type: choice
+        options: [dev, staging, prod]
 
-env:
-  PYTHON_VERSION: '3.11'
-  IMAGE_REPO: ${{ secrets.MODULE_IMAGE_REPO }}         # e.g. <account>.dkr.ecr.eu-central-1.amazonaws.com/hla-compass-dev-modules/my-module
-  ENVIRONMENT: dev
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  release:
+  build-push:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
     steps:
-      - name: Checkout module sources
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: '3.11'
 
-      - name: Install SDK and tooling
+      - name: Install SDK
         run: |
           python -m pip install --upgrade pip
-          pip install 'hla-compass[dev]' syft trivy
-          npm ci --prefix frontend || true   # skip if no frontend directory
+          pip install hla-compass==2.0.3
 
-      - name: Run test suite
+      - name: Validate module
+        run: hla-compass validate --strict
+
+      - name: Derive image ref
+        id: meta
+        shell: bash
         run: |
-          hla-compass test --input examples/sample_input.json
-          hla-compass test --docker --input examples/sample_input.json
-          if [ -d frontend ]; then npm test --prefix frontend; fi
+          VERSION="${GITHUB_REF_NAME#v}"
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          IMAGE_NAME="$(jq -r '.name' manifest.json 2>/dev/null || echo 'my-module')"
+          IMAGE_REF="ghcr.io/${OWNER}/${IMAGE_NAME}:${VERSION}"
+          echo "image_ref=$IMAGE_REF" >> "$GITHUB_OUTPUT"
 
-      - name: Build container image
-        run: |
-          IMAGE_TAG="${{ env.IMAGE_REPO }}:${GITHUB_REF_NAME#v}"
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-          hla-compass build --tag "$IMAGE_TAG"
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate SBOM
-        run: |
-          syft "$IMAGE_TAG" -o json > dist/sbom.json
-          ls -lh dist
-
-      - name: Vulnerability scan (Trivy)
-        run: trivy image --exit-code 1 --severity CRITICAL,HIGH "$IMAGE_TAG"
-
-      - name: Authenticate container registry (ECR example)
-        if: env.IMAGE_REPO contains 'amazonaws.com'
-        run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
-            | docker login --username AWS --password-stdin "${IMAGE_REPO%/*}"
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Build image
+        run: hla-compass build --tag "${{ steps.meta.outputs.image_ref }}"
 
       - name: Push image
-        run: docker push "$IMAGE_TAG"
+        run: docker push "${{ steps.meta.outputs.image_ref }}"
 
-      - name: Publish to HLA-Compass
+      - name: Publish to HLA-Compass (optional)
+        if: ${{ github.event.inputs.publish == 'true' }}
         env:
           HLA_ACCESS_TOKEN: ${{ secrets.HLA_ACCESS_TOKEN }}
-        run: hla-compass publish --env "$ENVIRONMENT" --image-ref "$IMAGE_TAG"
+        run: |
+          hla-compass publish --env "${{ github.event.inputs.environment }}" --scope org --generate-keys --image-ref "${{ steps.meta.outputs.image_ref }}"

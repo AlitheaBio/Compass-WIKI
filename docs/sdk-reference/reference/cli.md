@@ -13,8 +13,14 @@ Main entry point for the SDK CLI.
 Login to the platform via browser SSO.
 
 ```bash
-hla-compass auth login
+hla-compass auth login --env dev
 ```
+
+**Options:**
+
+* `--env dev|staging|prod`: Target environment (optional; defaults to `dev`, or `HLA_COMPASS_ENV`/`HLA_ENV` if set)
+* `--email EMAIL`: Non-browser login (discouraged for interactive use)
+* `--password-stdin`: Read password from stdin (recommended for automation)
 
 ### `auth logout`
 
@@ -54,8 +60,10 @@ hla-compass init <name> [options]
 
 **Options:**
 
-* `--template ui|no-ui`: Template type (default: prompted)
+* `--template ui|no-ui`: Module template
 * `--interactive`: Run the interactive wizard
+* `--compute-type docker|fargate`: Compute type (docker maps to Fargate in the platform runtime)
+* `--yes`: Non-interactive mode (accept defaults)
 
 **Example:**
 
@@ -73,11 +81,13 @@ hla-compass dev [options]
 
 **Options:**
 
-* `--verbose`: Show detailed logs
+* `--mode MODE`: Run mode (e.g., `interactive`)
+* `--image-tag TAG`: Override image tag used for the dev loop
+* `--payload FILE`: Path to an input payload JSON file
 
 ### `preflight`
 
-Validate module and sync manifest from Pydantic Input model.
+Run quick preflight checks (schema + structure).
 
 ```bash
 hla-compass preflight
@@ -88,7 +98,7 @@ hla-compass preflight
 Validate module manifest and structure.
 
 ```bash
-hla-compass validate [--json]
+hla-compass validate [--manifest manifest.json] [--format text|json] [--strict]
 ```
 
 ### `test`
@@ -102,7 +112,8 @@ hla-compass test [options]
 **Options:**
 
 * `--input FILE`: Input JSON file
-* `--local`: Run locally without API
+* `--docker`: Run inside Docker (parity with production)
+* `--output FILE`: Write output JSON to a file
 * `--json`: Output as JSON
 
 ---
@@ -120,7 +131,11 @@ hla-compass build [options]
 **Options:**
 
 * `--tag TAG`: Full image tag including registry (e.g., `ghcr.io/org/module:1.0.0`)
-* `--push`: Push to registry after build (requires docker login)
+* `--registry PREFIX`: Registry prefix override (if you want to derive tags)
+* `--push`: Push after build (requires docker login)
+* `--platform PLATFORM`: Target platforms (default: `linux/amd64`)
+* `--no-cache`: Disable build cache
+* `--local-sdk PATH`: Use a local SDK wheel (SDK development only)
 
 **Example:**
 
@@ -140,7 +155,10 @@ hla-compass publish [options]
 
 * `--env ENV`: Target environment (`dev`, `staging`, `prod`)
 * `--image-ref IMAGE`: Image reference (auto-detected from manifest if not provided)
-* `--visibility LEVEL`: Module visibility (`private`, `org`, `public`)
+* `--scope org|public`: Module scope (`org` is auto-approved; `public` requires approval)
+* `--platform PLATFORM`: Target platforms (default: `linux/amd64`)
+* `--generate-keys`: Auto-generate signing keys if missing
+* `--no-sign`: Disable signing (not recommended)
 
 **Example workflow:**
 
@@ -156,6 +174,31 @@ hla-compass publish --env dev
 ```
 
 > **Note:** Your organization must have the container registry namespace configured in the platform allowlist.
+
+### `publish-status`
+
+Check module publish intake status (and optionally watch until completion).
+
+```bash
+hla-compass publish-status --env dev --watch <publish-id>
+```
+
+### `keys`
+
+Manage signing keys used for module publishing.
+
+```bash
+hla-compass keys init
+hla-compass keys show
+```
+
+### `serve`
+
+Serve the module UI locally.
+
+```bash
+hla-compass serve --port 8090
+```
 
 ---
 

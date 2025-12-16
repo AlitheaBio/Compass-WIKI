@@ -1,53 +1,33 @@
 {
+  "schemaVersion": "1.0",
   "name": "module-name",
   "version": "1.0.0",
-  "schemaVersion": "1.0",
   "type": "with-ui",
+  "computeType": "fargate",
   "description": "Module with user interface",
-  "computeType": "docker",
   "execution": {
-    "supports": ["interactive"],
-    "defaultMode": "interactive",
     "entrypoint": "backend.main:UIModule",
-    "contextContract": "module-run-context-v1"
+    "supports": [
+      "interactive"
+    ],
+    "defaultMode": "interactive"
   },
-  "resources": {
-    "memory": 512,
-    "timeout": 300,
-    "environment": {
-      "LOG_LEVEL": "INFO"
-    }
-  },
-  "pricing": {
-    "tiers": [
-      {
-        "tier": "developer",
-        "model": "usage-based",
-        "amountAct": 0.5
-      }
-    ]
-  },
-  "permissions": {
-    "network": [],
-    "storage": true,
-    "database": ["read"]
-  },
-  "dependencies": {
-    "api": true,
-    "storage": true,
-    "peptides": true
+  "author": {
+    "name": "Developer Name",
+    "email": "developer@example.com",
+    "organization": "Organization"
   },
   "ui": {
     "framework": "react",
     "buildCommand": "npm run build",
-    "distPath": "frontend/dist",
-    "bucket": "bucket",
-    "bundleKey": "bundle.js"
+    "distPath": "frontend/dist"
   },
   "inputs": {
-    "title": "Module Inputs",
     "type": "object",
-    "required": ["param1"],
+    "title": "Module Inputs",
+    "required": [
+      "param1"
+    ],
     "properties": {
       "param1": {
         "type": "string",
@@ -57,8 +37,8 @@
       "param2": {
         "type": "string",
         "title": "Optional parameter",
-        "default": "default_value",
-        "description": "Defaults can be customized"
+        "description": "Defaults can be customized",
+        "default": "default_value"
       }
     }
   },
@@ -71,5 +51,32 @@
       "type": "object",
       "description": "Summary statistics"
     }
+  },
+  "resources": {
+    "memory": 512,
+    "timeout": 180,
+    "environment": {
+      "LOG_LEVEL": "INFO"
+    }
+  },
+  "metadata": {
+    "exposedParameters": [],
+    "auditLog": true
+  },
+  "permissions": {
+    "database": [
+      "read"
+    ],
+    "storage": true,
+    "network": []
+  },
+  "pricing": {
+    "tiers": [
+      {
+        "tier": "developer",
+        "model": "usage-based",
+        "amountAct": 0.5
+      }
+    ]
   }
 }

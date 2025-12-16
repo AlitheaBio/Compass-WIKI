@@ -1,1 +1,1 @@
-hla-compass
+hla-compass==2.0.3

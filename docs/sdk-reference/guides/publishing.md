@@ -4,7 +4,7 @@ Once your module is tested, you can publish it to the HLA-Compass platform using
 
 ## Prerequisites
 
-- Authenticated via `hla-compass auth login`
+- Authenticated via `hla-compass auth login --env dev|staging|prod`
 - Docker Desktop running
 - `manifest.json` version is bumped (modules are immutable)
 - Organization registry configured (contact your platform admin)
@@ -80,7 +80,7 @@ hla-compass publish --env dev
 
 The CLI will:
 1. Validate your manifest
-2. Sign the image and manifest cryptographically
+2. Sign the module manifest (recommended; requires signing keys)
 3. Register the module version with the platform catalog
 
 **Options:**
@@ -89,8 +89,11 @@ The CLI will:
 # Specify environment
 hla-compass publish --env dev|staging|prod
 
-# Specify visibility
-hla-compass publish --visibility private|org|public
+# Specify scope (approval workflow)
+hla-compass publish --scope org|public
+
+# Generate signing keys automatically (first publish)
+hla-compass publish --generate-keys
 
 # Specify image explicitly
 hla-compass publish --image-ref ghcr.io/your-org/my-module:1.0.0
@@ -107,13 +110,12 @@ Your organization must have approved registries configured before publishing. Co
 - `ghcr.io/your-org/*` - All images under your org
 - `ghcr.io/your-org/hla-modules/*` - Specific namespace
 
-## Visibility Levels
+## Scope
 
-| Level | Description |
+| Scope | Description |
 |-------|-------------|
-| `private` | Only you can see/run (default) |
-| `org` | All members of your organization |
-| `public` | Everyone (requires approval) |
+| `org` | Auto-approved; available to your organization |
+| `public` | Requires approval before other organizations can use it |
 
 ## Version Management
 
