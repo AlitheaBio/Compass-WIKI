@@ -4,7 +4,7 @@ This guide gets you from zero to a working module as fast as possible.
 
 ## Prerequisites
 
-- Python 3.10+
+- Python 3.11+
 - Docker Desktop running
 - Platform account (sign up at [compass.alithea.bio](https://compass.alithea.bio))
 
