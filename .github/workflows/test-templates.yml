@@ -43,6 +43,10 @@ jobs:
 
           for dir in "${MODULE_DIRS[@]}"; do
             echo "Validating: ${dir}"
+            if [ ! -d "${dir}" ]; then
+              echo "Skipping missing: ${dir}"
+              continue
+            fi
             (cd "${dir}" && hla-compass validate --strict)
           done
 

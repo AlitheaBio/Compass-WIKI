@@ -64,9 +64,12 @@ jobs:
           fetch-depth: 0
 
       - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/repo" \
+            -w /repo \
+            gitleaks/gitleaks:v8.18.2 \
+            detect --source /repo --redact --no-banner
 
   npm-audit:
     runs-on: ubuntu-latest
@@ -78,8 +81,15 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Run npm audit
+      - name: Install dependencies
         working-directory: templates/ui-template/frontend
         run: |
-          npm ci
-          npm audit --audit-level=high
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Run npm audit
+        working-directory: templates/ui-template/frontend
+        run: npm audit --audit-level=high

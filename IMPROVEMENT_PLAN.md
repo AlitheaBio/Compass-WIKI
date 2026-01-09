@@ -840,7 +840,7 @@ async def _check_postgres() -> dict:
 
 - [x] Add filelock to requirements:
 ```
-filelock==3.13.1
+filelock==3.20.1
 ```
 
 - [x] Create `api_stub/storage.py`:
