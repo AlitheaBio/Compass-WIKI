@@ -68,7 +68,7 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/repo" \
             -w /repo \
-            gitleaks/gitleaks:v8.18.2 \
+            zricethezav/gitleaks:v8.18.2 \
             detect --source /repo --redact --no-banner
 
   npm-audit:
