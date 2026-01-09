@@ -1,4 +1,4 @@
-# Alithea Bio Compass Wiki 
+# Alithea Bio Compass Wiki
 
 Welcome to the official module developer resources for the Compass platform. This repository contains examples, templates, and guides to help you build, test, and publish modules.
 
@@ -28,6 +28,14 @@ Welcome to the official module developer resources for the Compass platform. Thi
     cd examples/modules/hello-world
     hla-compass dev
     ```
+
+## Development Setup
+
+Install pre-commit hooks:
+```bash
+pip install pre-commit
+pre-commit install
+```
 
 ## 📚 Documentation
 

@@ -9,7 +9,7 @@ services:
       - .env.devkit
     environment:
       POSTGRES_USER: ${DEVKIT_DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DEVKIT_DB_PASSWORD:-postgres}
+      POSTGRES_PASSWORD: ${DEVKIT_DB_PASSWORD:?DEVKIT_DB_PASSWORD required}
       POSTGRES_DB: ${DEVKIT_DB_NAME:-hla_compass}
     ports:
       - "${HLA_DEVKIT_POSTGRES_PORT:-5432}:5432"
@@ -30,7 +30,7 @@ services:
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${DEVKIT_S3_ACCESS_KEY:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${DEVKIT_S3_SECRET_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${DEVKIT_S3_SECRET_KEY:?DEVKIT_S3_SECRET_KEY required}
     ports:
       - "${HLA_DEVKIT_MINIO_API_PORT:-9000}:9000"  # S3 API
       - "${HLA_DEVKIT_MINIO_CONSOLE_PORT:-9001}:9001"  # Web Console
@@ -44,8 +44,8 @@ services:
 
   api-stub:
     build:
-      context: ..
-      dockerfile: devkit/api-stub.Dockerfile
+      context: .
+      dockerfile: api-stub.Dockerfile
     container_name: hla-dev-api
     restart: unless-stopped
     env_file:
@@ -64,9 +64,15 @@ services:
     ports:
       - "${HLA_DEVKIT_API_PORT:-4100}:4100"
     volumes:
-      - ../docs/api:/app/docs/api:ro
-      - ../devkit/api_stub:/app/devkit/api_stub:ro
+      - ./api_stub:/app/api_stub:ro
       - devkit-api-state:/var/lib/devkit
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
 
 volumes:
   devkit-postgres:
