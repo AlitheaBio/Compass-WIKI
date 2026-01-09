@@ -23,7 +23,7 @@
     "@types/react-dom": "^19.0.0",
     "@types/plotly.js": "^3.0.6",
     "@types/react-plotly.js": "^2.6.3",
-    "typescript": "~5.3.3",
+    "typescript": "~5.9.3",
     "webpack": "^5.88.0",
     "webpack-cli": "^5.1.0",
     "webpack-dev-server": "^4.15.0",
