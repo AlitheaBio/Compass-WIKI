@@ -38,6 +38,8 @@ docker push ghcr.io/your-org/my-module:1.0.0
 hla-compass publish --env dev
 ```
 
+> **Tip:** If you omit `--image-ref`, `hla-compass publish` will build and push the image automatically using the manifest name/version and the registry defaults for the environment.
+
 ## Step-by-Step
 
 ### 1. Build Your Module
@@ -51,6 +53,16 @@ This creates a Docker image with:
 - Dependencies from `requirements.txt`
 - The HLA-Compass runtime
 - Your `manifest.json`
+
+**Common options:**
+
+```bash
+# Override registry prefix (derive tags)
+hla-compass build --registry ghcr.io/your-org
+
+# Build multi-platform images (requires --push)
+hla-compass build --platform linux/amd64 --platform linux/arm64 --push
+```
 
 ### 2. Push to Container Registry
 
@@ -82,12 +94,16 @@ The CLI will:
 1. Validate your manifest
 2. Sign the module manifest (recommended; requires signing keys)
 3. Register the module version with the platform catalog
+4. Build + push the image if `--image-ref` is omitted
 
 **Options:**
 
 ```bash
 # Specify environment
 hla-compass publish --env dev|staging|prod
+
+# Override registry (otherwise defaults are fetched from the API)
+hla-compass publish --registry ghcr.io/your-org
 
 # Specify scope (approval workflow)
 hla-compass publish --scope org|public
@@ -97,6 +113,12 @@ hla-compass publish --generate-keys
 
 # Specify image explicitly
 hla-compass publish --image-ref ghcr.io/your-org/my-module:1.0.0
+
+# Dry-run (validate only)
+hla-compass publish --dry-run --env dev
+
+# Target additional platforms
+hla-compass publish --platform linux/amd64 --platform linux/arm64
 ```
 
 ## Registry Configuration

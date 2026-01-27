@@ -25,15 +25,15 @@ class Input(BaseModel):
 
 class MyModule(Module):
     Input = Input
-    
+
     def execute(self, input_data: Input, context) -> dict:
         # input_data is validated Pydantic model with type hints
         sequence = input_data.sequence
         threshold = input_data.threshold
-        
+
         # Your analysis logic here
         results = {"analyzed": True}
-        
+
         return self.success(
             results=results,
             summary={"status": "complete"}
@@ -67,13 +67,13 @@ def execute(self, input_data: Input, context):
     # Simple query
     result = self.data.sql.query("SELECT * FROM peptides LIMIT 10")
     peptides = result["data"]  # List of dicts
-    
+
     # Parameterized query (ALWAYS use params for user input)
     result = self.data.sql.query(
         "SELECT sequence, mass FROM peptides WHERE length >= %s AND mass < %s",
         params=[input_data.min_length, input_data.max_mass]
     )
-    
+
     # Pattern matching
     result = self.data.sql.query(
         "SELECT * FROM peptides WHERE sequence LIKE %s",
@@ -87,10 +87,10 @@ def execute(self, input_data: Input, context):
 def execute(self, input_data: Input, context):
     # Read Parquet with Polars (recommended for large files)
     df = self.data.storage.read_parquet("runs/experiment/results.parquet", engine="polars")
-    
+
     # Read with Pandas
     df = self.data.storage.read_parquet("data/samples.parquet", engine="pandas")
-    
+
     # Low-level S3 access
     s3 = self.data.storage.get_s3_client()
     response = s3.get_object(Bucket="bucket", Key="path/to/file")
@@ -101,21 +101,21 @@ def execute(self, input_data: Input, context):
 ```python
 def execute(self, input_data: Input, context):
     results = [{"id": 1, "value": 42}]
-    
+
     # JSON output
     url = self.storage.save_json("results/analysis.json", results)
-    
+
     # CSV from DataFrame
     import pandas as pd
     df = pd.DataFrame(results)
     url = self.storage.save_csv("results/data.csv", df)
-    
+
     # Compressed CSV
     url = self.storage.save_csv("results/large.csv.gz", df, compress=True)
-    
+
     # Excel workbook
     url = self.storage.save_excel("results/report.xlsx", df)
-    
+
     # Raw file with custom content type
     url = self.storage.save_file(
         "results/custom.bin",
@@ -134,17 +134,17 @@ def execute(self, input_data: Input, context):
     run_id = self.run_id              # Unique execution ID
     module_id = self.module_id        # Module identifier
     module_version = self.module_version
-    
+
     # User/Org info
     user_id = self.user_id
     organization_id = self.organization_id
-    
+
     # Environment
     env = self.environment            # "dev", "staging", "prod"
-    
+
     # Credit reservation (if applicable)
     credit = self.credit              # CreditReservation object or None
-    
+
     # Logger with context
     self.logger.info("Processing", extra={"sample_count": len(input_data.samples)})
 ```
@@ -161,13 +161,13 @@ class MyModule(Module):
         # Input validation error (4xx)
         if len(input_data.sequence) < 5:
             raise ValidationError("Sequence must be at least 5 characters")
-        
+
         # Module logic error (5xx, retriable)
         try:
             result = external_api_call()
         except TimeoutError as e:
             raise ModuleError(f"External service timeout: {e}")
-        
+
         # Custom error with details
         error = ModuleError("Analysis failed")
         error.details = {"step": "alignment", "reason": "no matches"}
@@ -248,21 +248,21 @@ class AnalysisType(str, Enum):
 class Input(BaseModel):
     # String with constraints
     sequence: str = Field(min_length=1, max_length=100, description="Peptide sequence")
-    
+
     # Number with range
     threshold: float = Field(default=0.5, ge=0.0, le=1.0)
     count: int = Field(default=10, ge=1, le=1000)
-    
+
     # Enum/Literal for fixed choices
     analysis_type: AnalysisType = Field(default=AnalysisType.BINDING)
     output_format: Literal["json", "csv", "parquet"] = Field(default="json")
-    
+
     # Lists
     alleles: List[str] = Field(default_factory=list, description="HLA alleles")
-    
+
     # Optional
     notes: Optional[str] = None
-    
+
     # Nested object
     options: Optional["AdvancedOptions"] = None
 
@@ -279,7 +279,7 @@ from pydantic import BaseModel, Field, field_validator
 class Input(BaseModel):
     sequence: str
     allele: str
-    
+
     @field_validator("sequence")
     @classmethod
     def validate_sequence(cls, v):
@@ -287,7 +287,7 @@ class Input(BaseModel):
         if not all(c in valid_aa for c in v.upper()):
             raise ValueError("Sequence contains invalid amino acids")
         return v.upper()
-    
+
     @field_validator("allele")
     @classmethod
     def validate_allele(cls, v):
@@ -302,32 +302,37 @@ class Input(BaseModel):
 
 ```bash
 # Authentication
-hla-compass auth login           # Browser-based SSO login
-hla-compass auth logout          # Clear credentials
-hla-compass auth status          # Check auth status
+hla-compass auth login --env dev   # Browser-based SSO login
+hla-compass auth logout            # Clear credentials
+hla-compass auth status            # Check auth status
+hla-compass auth use-org <org-id>  # Select default organization
 
 # Module scaffolding
-hla-compass init my-module --interactive    # Interactive wizard
-hla-compass init my-module --template ui    # With React frontend
-hla-compass init my-module --template no-ui # Backend only
+hla-compass init my-module --template ui     # With React frontend
+hla-compass init my-module --template no-ui  # Backend only
+hla-compass init my-module --yes             # Non-interactive mode
 
 # Development
 hla-compass dev                  # Start local dev server
 hla-compass dev --verbose        # With full logging
-hla-compass preflight            # Validate + sync manifest
+hla-compass dev --payload input.json  # With custom input
+hla-compass serve --port 8080    # Serve UI locally
 
-# Testing
+# Testing & Validation
 hla-compass test                              # Run with defaults
 hla-compass test --input examples/input.json  # Custom input
-hla-compass validate                          # Validate manifest only
+hla-compass validate                          # Validate manifest
+hla-compass validate --strict                 # Fail on warnings
 
 # Building & Publishing
-hla-compass build --tag mymodule:1.0.0        # Build Docker image
-hla-compass publish --env dev --image-ref mymodule:1.0.0  # Publish
+hla-compass build --tag ghcr.io/org/module:1.0.0        # Build image
+hla-compass build --tag ghcr.io/org/module:1.0.0 --push # Build + push
+hla-compass publish --env dev --scope org               # Publish to platform
+hla-compass publish-status <id> --watch                 # Watch publish status
 
-# Utilities
-hla-compass doctor               # Check environment
-hla-compass list --env dev       # List published modules
+# Key Management
+hla-compass keys init            # Generate signing keys
+hla-compass keys show            # Show public key
 ```
 
 ---
@@ -383,7 +388,7 @@ class Input(BaseModel):
 
 class BatchProcessor(Module):
     Input = Input
-    
+
     def execute(self, input_data: Input, context):
         results = []
         for i in range(0, len(input_data.sample_ids), input_data.batch_size):
@@ -391,9 +396,9 @@ class BatchProcessor(Module):
             batch_results = self.process_batch(batch)
             results.extend(batch_results)
             self.logger.info(f"Processed {len(results)}/{len(input_data.sample_ids)}")
-        
+
         return self.success(results=results)
-    
+
     def process_batch(self, sample_ids: List[str]):
         placeholders = ",".join(["%s"] * len(sample_ids))
         result = self.data.sql.query(
@@ -409,17 +414,17 @@ class BatchProcessor(Module):
 def execute(self, input_data: Input, context):
     # Query to DataFrame
     result = self.data.sql.query("SELECT * FROM peptides LIMIT 1000")
-    
+
     import pandas as pd
     df = pd.DataFrame(result["data"])
-    
+
     # Process
     df["length"] = df["sequence"].str.len()
     filtered = df[df["length"] >= input_data.min_length]
-    
+
     # Save and return
     self.storage.save_csv("results/filtered.csv", filtered)
-    
+
     return self.success(
         results=filtered.to_dict(orient="records"),
         summary={"total": len(df), "filtered": len(filtered)}
@@ -433,7 +438,7 @@ from hla_compass.constants import SUPPORTED_HLA_ALLELES
 
 class Input(BaseModel):
     alleles: List[str] = Field(description="HLA alleles to analyze")
-    
+
     @field_validator("alleles")
     @classmethod
     def validate_alleles(cls, v):

@@ -58,7 +58,7 @@ cp -r ui-template/ my-module/
 cp -r no-ui-template/ my-module/
 ```
 
-> Prefer using the CLI scaffold? Run `hla-compass init -i` and let the wizard pick the right template for you.
+> Prefer using the CLI scaffold? Run `hla-compass init my-module --template ui` or `hla-compass init my-module --template no-ui`.
 
 ### 2. Update the module:
 - Replace TODOs with your implementation

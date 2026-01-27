@@ -28,13 +28,13 @@ This will open a browser window to authenticate via SSO. Once complete, your cre
 
 ## 3. Your First Module
 
-Create a new module using the interactive wizard:
+Create a new module using a template:
 
 ```bash
-hla-compass init my-first-module --interactive
+hla-compass init my-first-module --template ui
 ```
 
-Select the "UI" template if you want to build a visual tool, or "No-UI" for a backend analysis script.
+Use `--template ui` if you want to build a visual tool, or `--template no-ui` for a backend analysis script.
 
 ## 4. Run It
 
@@ -45,4 +45,6 @@ cd my-first-module
 hla-compass dev
 ```
 
-This starts a local Docker container that mirrors the production environment. Any changes you make to `backend/main.py` or `frontend/` will be hot-reloaded.
+This builds the module image and runs it in a local loop. Re-run `hla-compass dev` to pick up code changes.
+
+For UI modules, use `npm run dev` in `frontend/` for live UI iteration, and `hla-compass serve` to preview the built bundle (`frontend/dist`).

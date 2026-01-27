@@ -3,7 +3,7 @@
 > Companion to [Module developer handbook](../handbook.md). Use this guide when wiring GitHub Actions or other CI systems to build container images, push to your registry, and publish via `/v1/modules/publish`.
 
 ## 1. Prerequisites
-- Python 3.11+, Docker 20.10+, and the HLA-Compass SDK (`pip install hla-compass`).
+- Python 3.8+, Docker 20.10+, and the HLA-Compass SDK (`pip install hla-compass`).
 - Organization registry entries created under **Org Settings → Registries** (provider, namespace glob, optional read credential). Requests referencing namespaces outside that allow-list fail with `REGISTRY_UNAUTHORIZED`.
 - CI secret (`HLA_ACCESS_TOKEN`) scoped to the intended environment. Headless flows export it as `HLA_ACCESS_TOKEN` before running `hla-compass` commands.
 - Optional: GitHub Container Registry (GHCR) PAT or machine-user token with `packages:write` (push) and `packages:read` (to test pulls locally).
@@ -46,7 +46,7 @@ jobs:
       - name: Install SDK
         run: |
           python -m pip install --upgrade pip
-          pip install hla-compass==2.0.3
+          pip install hla-compass
 
       - name: Validate module
         run: hla-compass validate --strict

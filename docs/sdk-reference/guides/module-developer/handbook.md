@@ -21,17 +21,19 @@ pip install hla-compass
 hla-compass auth login --env dev
 
 # 3) Scaffold a module
-hla-compass init my-analyzer --template no-ui --interactive
+hla-compass init my-analyzer --template no-ui
 cd my-analyzer
 
 # 4) Validate + test
 hla-compass validate --strict
 hla-compass test --input examples/sample_input.json
 
-# 5) Dev loop (Docker hot-reload parity)
+# 5) Dev loop (Docker parity; press Enter to re-run)
 hla-compass dev
+# Re-run `hla-compass dev` after code changes to rebuild the image
 
-# 6) (UI modules) Serve UI locally
+# 6) (UI modules) Build UI, then serve the bundle
+npm run build  # or `npm run dev` to write frontend/dist while you iterate
 hla-compass serve --port 8090
 ```
 
@@ -42,10 +44,9 @@ hla-compass serve --port 8090
   - `hla-compass auth status` / `hla-compass auth logout`
   - `hla-compass auth use-org <org-id>` (if you belong to multiple orgs)
 - Project
-  - `hla-compass init <name> --template ui|no-ui [--compute-type fargate]`
-  - `hla-compass validate --strict`
-  - `hla-compass preflight` (quick checks)
-  - `hla-compass test [--docker] --input examples/sample_input.json`
+  - `hla-compass init <name> --template ui|no-ui [--yes]`
+  - `hla-compass validate [--strict] [--format text|json]`
+  - `hla-compass test --input examples/sample_input.json [--output results.json]`
   - `hla-compass dev [--payload examples/sample_input.json]`
   - `hla-compass serve --port 8090` (UI only)
 - Build & publish
@@ -53,8 +54,7 @@ hla-compass serve --port 8090
   - `hla-compass keys init` / `hla-compass keys show` (signing keys)
   - `hla-compass publish --env dev --scope org|public [--generate-keys] [--image-ref ...]`
   - `hla-compass publish-status --env dev --watch <publish-id>`
-- Discover & run
-  - `hla-compass list --env dev [--all]`
+- Remote execution
   - `hla-compass run --env dev <module-id> --parameters examples/sample_input.json`
 
 ## 4) Development Workflow
@@ -96,10 +96,9 @@ The UI build must produce a JavaScript bundle in `frontend/dist/` (default: `bun
 
 ## 5) Testing & Validation
 
-- `hla-compass validate --strict` checks manifest schema + structure and enforces SDK guardrails (including pinned Python dependencies in `backend/requirements.txt`).
-- `hla-compass test --input ...` runs locally.
-- `hla-compass test --docker --input ...` runs inside Docker for parity.
-- `hla-compass dev` is the fastest loop for iterating with Docker parity and hot reload.
+- `hla-compass validate` checks schema, structure, entrypoint, UI, security, pricing, and OpenAPI; `--strict` treats warnings as failures. It always enforces pinned dependencies in `backend/requirements.txt`.
+- `hla-compass test --input ...` builds the container and runs it with your input.
+- `hla-compass dev` builds + runs the module in Docker; press Enter to re-run. Exit and re-run to rebuild after code changes.
 
 ## 6) Build, Push, Publish
 
@@ -122,7 +121,7 @@ hla-compass publish-status --env dev --watch <publish-id>
 Notes:
 - Versions are immutable; bump `manifest.json` `version` for every release.
 - `--scope public` requires approval before other organizations can use the module.
-- Signing keys are stored under `~/.hla-compass/keys/` (generate with `hla-compass keys init`, or let `publish --generate-keys` create them).
+- Signing keys are stored under the SDK config directory (default `~/.hla-compass/keys/`). Generate with `hla-compass keys init`, or let `publish --generate-keys` create them.
 
 ## 7) Registry Onboarding (Org Admins)
 

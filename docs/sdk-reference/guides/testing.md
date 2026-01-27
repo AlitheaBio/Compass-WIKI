@@ -1,39 +1,40 @@
 # Testing
 
-Reliable modules require robust testing. The SDK provides three layers of testing.
+Reliable modules require robust testing. The SDK provides multiple testing approaches.
 
-## 1. Local Python Test
+## Container Test
 
-The fastest way to test logic. Runs your code directly in your local Python environment.
+The primary way to test your module. Builds your module container and runs the test, ensuring your `Dockerfile`, `requirements.txt`, and system dependencies are correct.
 
 ```bash
 hla-compass test --input examples/sample_input.json
 ```
 
-*   **Pros:** Fast, easy debugger attachment.
-*   **Cons:** Doesn't isolate dependencies; might work locally but fail in Docker.
+*   **Pros:** High fidelity; matches production environment.
+*   **Cons:** Requires Docker; slower than local Python tests.
 
-## 2. Docker Test (Parity)
-
-Builds and runs your module container. This ensures your `Dockerfile`, `requirements.txt`, and system dependencies are correct.
+**Additional options:**
 
 ```bash
-hla-compass test --docker --input examples/sample_input.json
+# Output results to a file
+hla-compass test --input examples/sample_input.json --output results.json
+
+# JSON output format
+hla-compass test --input examples/sample_input.json --json
 ```
 
-*   **Pros:** High fidelity; matches production environment.
-*   **Cons:** Slower (requires build).
+## Dev Loop
 
-## 3. Dev Server (Hot Reload)
-
-Best for UI development. Runs the container but mounts your local code directory, so changes update instantly.
+Best for UI preview in the real container. Builds the image and runs it in a loop (press Enter to re-run). Re-run `hla-compass dev` to pick up code changes.
 
 ```bash
 hla-compass dev
 ```
 
-*   **Pros:** Instant feedback, full UI interaction.
-*   **Cons:** Requires Docker.
+*   **Pros:** Close to production behavior, full UI interaction.
+*   **Cons:** Rebuild required to pick up code changes.
+
+For live UI iteration, run `npm run dev` inside `frontend/` (Webpack dev server), and use `hla-compass serve` to preview the built bundle.
 
 ## Unit Testing
 
@@ -56,12 +57,12 @@ from hla_compass.testing import ModuleTester, MockContext
 def test_with_mock_data():
     # 1. Setup Mock Context
     context = MockContext.create()
-    
+
     # 2. Register a mock response for a SQL query
     # Matches any POST request to a path containing "query"
-    context.api.add_response(
-        method="POST", 
-        path_pattern="query", 
+    context["api"].add_response(
+        method="POST",
+        path_pattern="query",
         response={
             "columns": ["sequence", "mass"],
             "data": [
@@ -70,12 +71,18 @@ def test_with_mock_data():
             "count": 1
         }
     )
-    
+
     # 3. Run Module
     tester = ModuleTester()
     # The module will receive our mock data when it calls self.data.sql.query()
     result = tester.test_local("backend/main.py", {"input": "val"}, context)
-    
+
     assert result["status"] == "success"
     assert result["results"][0]["sequence"] == "MOCKED_SEQ"
 ```
+
+### Additional helpers
+
+* `ModuleTester.quickstart(...)` runs a module class using defaults derived from the manifest.
+* `ModuleTester.create_test_suite(...)` executes multiple cases and summarizes pass/fail counts.
+* `ModuleTester.benchmark(...)` captures timing stats for repeated runs.
