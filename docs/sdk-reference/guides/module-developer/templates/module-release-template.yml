@@ -44,7 +44,7 @@ jobs:
       - name: Install SDK
         run: |
           python -m pip install --upgrade pip
-          pip install hla-compass==2.0.5
+          pip install hla-compass
 
       - name: Validate module
         run: hla-compass validate --strict
