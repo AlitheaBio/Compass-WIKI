@@ -1,95 +1,93 @@
 # Module Development
 
-Modules are the building blocks of the HLA-Compass platform. They encapsulate scientific logic (Python) and optional user interfaces (React) into versioned, reproducible containers.
+For the complete workflow, see **[Getting Started](getting-started.md)**.
 
-## Creating a Module
+---
 
-Use the `init` command to scaffold a new module:
+## Module Structure
 
-```bash
-hla-compass init my-module --template ui
-```
-
-### Templates
-
-*   **No-UI**: Backend-only module. Best for batch analysis, data transformation, or pipelines.
-*   **UI**: Full-stack module. Includes a React frontend that runs alongside your Python code.
-
-## Directory Structure
+### No-UI (Backend Only)
 
 ```text
 my-module/
-├── manifest.json        # Module metadata (name, inputs, outputs)
+├── manifest.json
 ├── backend/
-│   ├── main.py          # Entry point (Module class)
-│   └── requirements.txt # Python dependencies
-├── frontend/            # (UI modules only)
-│   ├── index.tsx        # UI entrypoint (exports ModuleUI)
-│   ├── webpack.config.js
-│   ├── package.json
-│   └── src/             # Shared UI helpers (optional)
+│   ├── main.py
+│   └── requirements.txt
 └── examples/
-    └── sample_input.json # Test payload
+    └── sample_input.json
 ```
 
-## The `Module` Class
+### UI (Full-Stack)
 
-Your logic lives in `backend/main.py`. Inherit from `hla_compass.Module` and implement `execute()`.
+```text
+my-module/
+├── manifest.json
+├── backend/
+│   ├── main.py
+│   └── requirements.txt
+├── frontend/
+│   ├── index.tsx
+│   ├── webpack.config.js
+│   ├── package.json
+│   └── dist/           # npm run build output
+└── examples/
+```
+
+---
+
+## The Module Class
 
 ```python
 from pydantic import BaseModel, Field
 from hla_compass import Module
 
 class Input(BaseModel):
-    sequence: str = Field(..., description="Peptide sequence")
+    sequence: str = Field(description="Peptide sequence")
+    threshold: float = Field(default=0.5, ge=0.0, le=1.0)
 
-class MyAnalyzer(Module):
+class MyModule(Module):
     Input = Input
 
     def execute(self, input_data: Input, context):
-        # Access inputs (typed)
-        sequence = input_data.sequence
-
-        # Access data via scoped SQL
-        result = self.data.sql.query(
-            "SELECT sequence, mass FROM peptides WHERE sequence = %s",
-            params=[sequence]
-        )
-        peptides = result["data"]
-
-        # Return results (or return raw data and let the SDK summarize)
-        return self.success(results=peptides)
+        # Your logic here
+        result = self.analyze(input_data.sequence)
+        return self.success(results=result)
 ```
 
-### `serve()` vs `run()`
+---
 
-*   **`serve()`**: Starts a FastAPI server with `/execute` for interactive/session runs. If you call this directly, add `fastapi`, `uvicorn`, and `python-multipart` to your backend requirements. In non-local environments, `/execute` requires `HLA_COMPASS_EXECUTE_TOKEN` (send `X-HLA-Execute-Token` or `Authorization: Bearer <token>`). For local dev, the SDK allows unauthenticated calls unless you override with `HLA_COMPASS_ENV`.
-*   **`run()`**: Executes logic once. Used by the `module-runner` entrypoint for async/batch jobs.
+## Key Methods
 
-For local UI preview, use the CLI: `hla-compass serve` (runs the container helper) or `npm run dev` inside `frontend/` for live UI iteration.
+| Method | Purpose |
+|--------|---------|
+| `execute(input_data, context)` | Main entry point |
+| `self.success(results=..., summary=...)` | Return success |
+| `self.data.sql.query(sql, params=[])` | Query database |
+| `self.storage.save_json(path, data)` | Save output file |
+| `self.logger.info(msg)` | Log information |
 
-## Manifest Synchronization
+---
 
-The SDK can update your `manifest.json` when you call `sync_manifest()` locally.
+## UI Development
 
-```python
-# In your code
-class Inputs(BaseModel):
-    sequence: str
-    threshold: float = 0.5
+For UI modules:
 
-class MyModule(Module):
-    Input = Inputs
-    # ...
+```bash
+cd frontend
+npm install
+npm run dev      # Development server
+npm run build    # Production build → dist/
+cd ..
+hla-compass serve --port 8080  # Preview
 ```
 
-Run `MyModule().sync_manifest()` locally (Python API) to update the `manifest.json` `inputs` schema.
+The bundle must export `ModuleUI` as UMD global.
 
-## Hybrid Runtime
+---
 
-The platform supports multiple execution modes using the *same* module image (controlled by `HLA_COMPASS_RUN_MODE`):
+## Next Steps
 
-1.  **Interactive (Session):** Runs `serve()`. The container stays alive, serving the UI and responding to API requests (set `HLA_COMPASS_RUN_MODE=serve` or `interactive`).
-2.  **Batch (Job):** Runs the logic once and exits (default `HLA_COMPASS_RUN_MODE=async`). Optimized for high-throughput pipelines.
-
-Your module supports both automatically if you use the standard `Module` class.
+- [Getting Started](getting-started.md) - Complete workflow
+- [Data Access](data-access.md) - SQL and storage
+- [Publishing](publishing.md) - Registry and CI/CD

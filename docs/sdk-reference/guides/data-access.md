@@ -21,7 +21,7 @@ The default `immunopeptidomics` catalog provides access to:
 
 ## SQL Access
 
-Execute raw SQL queries against the catalog's schema. The platform automatically enforces Row-Level Security (RLS) so you only see data your organization is authorized to access.
+Execute raw SQL queries against the catalog's schema. The platform automatically enforces Row-Level Security (RLS) so you only see data your organization is authorized to access. The SDK routes queries to `/v1/data/...` or `/v1/api/data/...` depending on whether a user token or API key is in use.
 
 ```python
 # Basic Query
@@ -31,7 +31,7 @@ print(result["data"])  # [{'sequence': '...', 'mass': 1000.0}, ...]
 # Parameterized Query (ALWAYS use this for user input)
 min_len = input_data.get("min_length", 8)
 result = self.data.sql.query(
-    "SELECT * FROM peptides WHERE length >= %s", 
+    "SELECT * FROM peptides WHERE length >= %s",
     params=[min_len]
 )
 ```
@@ -65,8 +65,12 @@ from hla_compass.data import DataClient
 def execute(self, input_data, context):
     # Access default catalog
     peptides = self.data.sql.query("...")
-    
-    # Access Genetics catalog
-    genetics = DataClient(provider="alithea-bio", catalog="genetics", api_client=self.context.api)
+
+    # Access Genetics catalog (reuse the API client if available)
+    genetics = DataClient(
+        provider="alithea-bio",
+        catalog="genetics",
+        api_client=self.context.get("api"),
+    )
     genes = genetics.sql.query("SELECT * FROM gene_expression ...")
 ```

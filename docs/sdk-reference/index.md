@@ -1,37 +1,27 @@
 # HLA-Compass Python SDK
 
-The **HLA-Compass SDK** provides a comprehensive toolkit for building, testing, and publishing bioinformatics modules on the Alithea Bio platform.
+The SDK provides tools for building, testing, and publishing bioinformatics modules.
 
-## Key Features
+## Golden Workflow
 
-* **Module System**: Simple class-based API for defining logic (`hla_compass.Module`).
-* **Data Access**: Strongly-typed access to Peptide, Protein, Sample, and HLA data.
-* **Authentication**: Secure, browser-based SSO for developers.
-* **CLI**: Powerful command-line tools for scaffolding, local development, and publishing.
-* **Hybrid Runtime**: Support for both Batch jobs and Interactive UI sessions.
-
-## Installation
-
-```bash
-pip install hla-compass
 ```
+Install → Login → Init → Validate → Test → Build → Push → Publish
+```
+
+**[Complete Guide →](guides/getting-started.md)**
 
 ## Quick Start
 
-1.  **Login:**
-    ```bash
-    hla-compass auth login
-    ```
+```bash
+pip install hla-compass
+hla-compass auth login --env dev
+hla-compass init my-module --template no-ui
+cd my-module
+hla-compass dev
+```
 
-2.  **Create a Module:**
-    ```bash
-    hla-compass init my-module --template ui
-    ```
+## Documentation
 
-3.  **Run Locally:**
-    ```bash
-    cd my-module
-    hla-compass dev
-    ```
-
-Explore the [User Guide](guides/getting-started.md) for more details.
+- **[Getting Started](guides/getting-started.md)** - Step-by-step workflow
+- **[CLI Reference](reference/cli.md)** - All commands
+- **[Module API](reference/module.md)** - Python API

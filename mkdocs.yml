@@ -33,6 +33,8 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
+          paths:
+            - ../HLA-Compass-platform/sdk/python
           options:
             show_source: false
             show_root_heading: true
@@ -49,19 +51,19 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Quickstart: quickstart.md
+  - Getting Started: sdk-reference/guides/getting-started.md
   - Guides:
+    - Module Development: sdk-reference/guides/module-development.md
     - Data Access: sdk-reference/guides/data-access.md
     - Testing: sdk-reference/guides/testing.md
-    - Module Development: sdk-reference/guides/module-development.md
     - Authentication: sdk-reference/guides/authentication.md
     - Publishing: sdk-reference/guides/publishing.md
+    - CI/CD Recipes: sdk-reference/guides/module-developer/ci_cd/ci_cd_for_modules.md
   - Reference:
     - CLI Commands: sdk-reference/reference/cli.md
     - Module API: sdk-reference/reference/module.md
     - Data API: sdk-reference/reference/data.md
     - Storage API: sdk-reference/reference/storage.md
+    - Auth API: sdk-reference/reference/auth.md
     - Testing API: sdk-reference/reference/testing.md
   - LLM Context: llm-context.md
-  - Examples:
-    - Overview: module-development/README.md

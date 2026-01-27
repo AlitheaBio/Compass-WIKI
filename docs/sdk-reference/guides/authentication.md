@@ -15,7 +15,7 @@ hla-compass auth login --env dev
 2.  It opens your default browser to the HLA-Compass login page.
 3.  You log in with your credentials (or via your organization's IdP).
 4.  The browser redirects back to your local CLI with a secure token.
-5.  The CLI stores credentials in your OS keyring when available, otherwise in an encrypted file under `~/.hla-compass/`.
+5.  The CLI stores credentials in your system keyring when available. If keyring is unavailable, it falls back to an encrypted file at the SDK config directory (default `~/.hla-compass/credentials.json`) with the encryption key in `credentials.key` or `HLA_COMPASS_CREDENTIAL_KEY`.
 
 ## Non-browser login (automation)
 
@@ -31,15 +31,19 @@ This reads the password from stdin (avoids leaking it into shell history).
 
 For automated environments (CI/CD pipelines) where interactive login is not possible, use environment variables.
 
-1.  **Generate a Token:** Log in locally, then view your token (or generate a long-lived service token from the UI).
+1.  **Generate a Token or API Key:** Log in locally, then export your token (or generate a long-lived API key from the UI).
 2.  **Set Variables:**
 
 ```bash
 export HLA_COMPASS_ENV=prod
 export HLA_ACCESS_TOKEN=your_jwt_token_here
+# or
+export HLA_API_KEY=your_api_key_here
 ```
 
 When these variables are present, the SDK will use them automatically without requiring `hla-compass auth login`.
+
+> **Config directory override:** Set `HLA_COMPASS_CONFIG_DIR` to move the SDK config/credential files (must be absolute or within your home/current/temp directory).
 
 ## Managing Credentials
 
