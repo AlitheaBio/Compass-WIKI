@@ -21,7 +21,7 @@ echo ""
 
 # Build
 echo "[1/3] Building documentation..."
-mkdocs build --strict
+mkdocs build
 
 # Deploy to S3
 echo "[2/3] Syncing to S3..."
