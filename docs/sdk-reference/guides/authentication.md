@@ -70,3 +70,11 @@ If your user belongs to multiple organizations, you can switch the active contex
 ```bash
 hla-compass auth use-org <org-id>
 ```
+
+---
+
+## Next Steps
+
+- [Getting Started](getting-started.md) - Complete workflow guide
+- [CLI Reference](../reference/cli.md) - All authentication commands
+- [CI/CD Recipes](ci-cd.md) - Automated authentication for pipelines

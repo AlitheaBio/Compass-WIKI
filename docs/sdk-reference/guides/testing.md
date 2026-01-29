@@ -86,3 +86,11 @@ def test_with_mock_data():
 * `ModuleTester.quickstart(...)` runs a module class using defaults derived from the manifest.
 * `ModuleTester.create_test_suite(...)` executes multiple cases and summarizes pass/fail counts.
 * `ModuleTester.benchmark(...)` captures timing stats for repeated runs.
+
+---
+
+## Next Steps
+
+- [Publishing](publishing.md) - Deploy your tested module
+- [CI/CD Recipes](ci-cd.md) - Automate testing in CI
+- [Testing API](../reference/testing.md) - Complete testing reference

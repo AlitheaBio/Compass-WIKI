@@ -262,3 +262,11 @@ Show the public key (base64 DER) for distribution.
 ```bash
 hla-compass keys show
 ```
+
+---
+
+## Next Steps
+
+- [Getting Started](../guides/getting-started.md) - Step-by-step workflow
+- [Publishing](../guides/publishing.md) - Registry and deployment guide
+- [CI/CD Recipes](../guides/ci-cd.md) - Automate CLI commands in pipelines

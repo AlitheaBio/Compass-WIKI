@@ -1,4 +1,4 @@
-# CI/CD Recipes for Publishing Modules
+# CI/CD Recipes
 
 > Use this guide when wiring GitHub Actions or other CI systems to build container images, push to your registry, and publish via `/v1/modules/publish`.
 

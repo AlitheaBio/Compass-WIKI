@@ -1,4 +1,4 @@
-# Data Access Guide
+# Data Access
 
 The HLA-Compass platform provides a unified "Scoped Vending Machine" model for data access. This ensures security (Row-Level Security) and performance (Direct S3 Access).
 
@@ -85,4 +85,12 @@ def execute(self, input_data, context):
         api_client=self.context.get("api"),
     )
     genes = genetics.sql.query("SELECT * FROM gene_expression ...")
+
+---
+
+## Next Steps
+
+- [Storage API](../reference/storage.md) - File storage reference
+- [Data API](../reference/data.md) - Complete data client reference
+- [Testing](testing.md) - Test your data access code
 ```
