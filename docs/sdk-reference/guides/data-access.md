@@ -17,7 +17,7 @@ The default `immunopeptidomics` catalog provides access to:
 | `samples` | Sample information and experimental conditions |
 | `hla_alleles` | HLA allele reference data |
 
-> For complete schema documentation, see the [Data Catalog Reference](../reference/data-catalog.md).
+> For complete schema documentation, see the [Data API Reference](../reference/data.md).
 
 ## SQL Access
 

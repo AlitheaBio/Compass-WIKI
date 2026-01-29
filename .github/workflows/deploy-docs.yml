@@ -33,7 +33,7 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install mkdocs-material mkdocstrings[python]
+        run: pip install mkdocs-material mkdocstrings[python] hla-compass
 
       - name: Build documentation
         run: mkdocs build --strict

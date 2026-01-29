@@ -1,6 +1,6 @@
 # CI/CD Recipes for Publishing Modules
 
-> Companion to [Module developer handbook](../handbook.md). Use this guide when wiring GitHub Actions or other CI systems to build container images, push to your registry, and publish via `/v1/modules/publish`.
+> Use this guide when wiring GitHub Actions or other CI systems to build container images, push to your registry, and publish via `/v1/modules/publish`.
 
 ## 1. Prerequisites
 - Python 3.8+, Docker 20.10+, and the HLA-Compass SDK (`pip install hla-compass`).
@@ -110,6 +110,6 @@ This flow is useful when experimenting or before CI pipelines exist. Once stabil
 | CI cannot pull private GHCR image | Platform credential missing | Provide read-only token via registry onboarding; verify with `docker pull` from a clean environment. |
 
 ## 6. References
-- [Module developer handbook](../handbook.md)
-- [Publishing](../../publishing.md)
-- [CLI Commands](../../../reference/cli.md)
+- [Module Development](module-development.md)
+- [Publishing](publishing.md)
+- [CLI Commands](../reference/cli.md)

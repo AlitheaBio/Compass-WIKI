@@ -58,7 +58,7 @@ The default catalog provides these tables:
 | `samples` | id, name, tissue, condition | Sample metadata and experimental conditions |
 | `hla_alleles` | id, name, supertype | HLA allele reference data |
 
-For complete column details, see the [Data Catalog Reference](sdk-reference/reference/data-catalog.md).
+For complete column details, see the [Data API Reference](sdk-reference/reference/data.md).
 
 ### SQL Queries (Row-Level Security Applied Automatically)
 
