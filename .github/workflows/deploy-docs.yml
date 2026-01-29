@@ -5,49 +5,48 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      environment:
-        description: Environment to deploy (dev/staging/prod)
-        required: true
-        default: dev
-        type: choice
-        options:
-          - dev
-          - staging
-          - prod
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  deploy-docs:
-    name: Deploy Documentation
+  deploy:
+    name: Deploy to docs.alithea.bio
     runs-on: ubuntu-latest
-    # Default to dev for push events, use input for workflow_dispatch
-    env:
-      ENVIRONMENT: ${{ github.event.inputs.environment || 'dev' }}
-    
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsDeployRole-HLACompass
           aws-region: eu-central-1
-          role-session-name: GitHubActionsDocsDeploy
+          role-session-name: compass-wiki-deploy-${{ github.run_id }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
+          cache: pip
 
-      - name: Install MkDocs
-        run: |
-          python -m pip install --upgrade pip
-          pip install mkdocs-material mkdocstrings[python] hla-compass==2.0.3
+      - name: Install dependencies
+        run: pip install mkdocs-material mkdocstrings[python]
 
-      - name: Deploy Docs
+      - name: Build documentation
+        run: mkdocs build --strict
+
+      - name: Deploy to S3
         run: |
-          ./scripts/deploy_docs.sh
+          BUCKET=$(aws ssm get-parameter --name "/compass-wiki/s3-bucket" --query "Parameter.Value" --output text)
+          echo "Deploying to s3://${BUCKET}"
+          aws s3 sync site/ "s3://${BUCKET}" --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          DISTRIBUTION_ID=$(aws ssm get-parameter --name "/compass-wiki/cloudfront-distribution-id" --query "Parameter.Value" --output text)
+          echo "Invalidating CloudFront distribution ${DISTRIBUTION_ID}"
+          aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths "/*"
+          echo "✅ Deployed to https://docs.alithea.bio"

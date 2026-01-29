@@ -1,41 +1,35 @@
 #!/bin/bash
-set -e
+# Local deployment script for Compass-WIKI documentation
+# For CI/CD, use the GitHub Actions workflow instead
+set -euo pipefail
 
-# Configuration
-ENVIRONMENT="${ENVIRONMENT:-dev}"
-BUCKET_NAME="hla-compass-docs-${ENVIRONMENT}"
-DISTRIBUTION_ID_PARAM="/hla-compass/${ENVIRONMENT}/docs/cloudfront-distribution-id"
+echo "=== Compass-WIKI Documentation Deployment ==="
+echo "Target: https://docs.alithea.bio"
+echo ""
 
-# Check if mkdocs is installed
-if ! command -v mkdocs &> /dev/null; then
-    echo "mkdocs could not be found. Please install it using 'pip install mkdocs-material mkdocstrings[python]'"
-    exit 1
-fi
+# Check prerequisites
+command -v mkdocs &>/dev/null || { echo "Error: mkdocs not installed. Run: pip install mkdocs-material mkdocstrings[python]"; exit 1; }
+command -v aws &>/dev/null || { echo "Error: AWS CLI not installed"; exit 1; }
 
-echo "Building documentation..."
-mkdocs build
+# Get config from SSM
+BUCKET=$(aws ssm get-parameter --name "/compass-wiki/s3-bucket" --query "Parameter.Value" --output text)
+DISTRIBUTION_ID=$(aws ssm get-parameter --name "/compass-wiki/cloudfront-distribution-id" --query "Parameter.Value" --output text)
 
-echo "Deploying to ${ENVIRONMENT} environment..."
+echo "Bucket: ${BUCKET}"
+echo "Distribution: ${DISTRIBUTION_ID}"
+echo ""
 
-# Check if bucket exists
-if aws s3 ls "s3://${BUCKET_NAME}" 2>&1 | grep -q 'NoSuchBucket'; then
-    echo "Error: Bucket ${BUCKET_NAME} does not exist. Please create it first via Terraform."
-    exit 1
-fi
+# Build
+echo "[1/3] Building documentation..."
+mkdocs build --strict
 
-# Sync files to S3
-echo "Syncing files to s3://${BUCKET_NAME}..."
-aws s3 sync site/ "s3://${BUCKET_NAME}" --delete
+# Deploy to S3
+echo "[2/3] Syncing to S3..."
+aws s3 sync site/ "s3://${BUCKET}" --delete
 
-# Invalidate CloudFront cache if distribution ID is available
-echo "Checking for CloudFront distribution ID..."
-DISTRIBUTION_ID=$(aws ssm get-parameter --name "${DISTRIBUTION_ID_PARAM}" --query "Parameter.Value" --output text 2>/dev/null || echo "")
+# Invalidate CloudFront
+echo "[3/3] Invalidating CloudFront cache..."
+aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths "/*" --query "Invalidation.Id" --output text
 
-if [ -n "${DISTRIBUTION_ID}" ]; then
-    echo "Invalidating CloudFront cache for distribution ${DISTRIBUTION_ID}..."
-    aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths "/*"
-    echo "Deployment complete! Docs should be available shortly."
-else
-    echo "Warning: Could not find CloudFront distribution ID in SSM parameter ${DISTRIBUTION_ID_PARAM}."
-    echo "Cache invalidation skipped. You may not see changes immediately."
-fi
+echo ""
+echo "✅ Deployed to https://docs.alithea.bio"

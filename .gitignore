@@ -24,3 +24,8 @@ site/
 .env.*
 !.env.example
 !.env.*.example
+
+# Deployment artifacts
+*_config.json
+*_policy.json
+function_code.json

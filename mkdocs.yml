@@ -58,7 +58,7 @@ nav:
     - Testing: sdk-reference/guides/testing.md
     - Authentication: sdk-reference/guides/authentication.md
     - Publishing: sdk-reference/guides/publishing.md
-    - CI/CD Recipes: sdk-reference/guides/module-developer/ci_cd/ci_cd_for_modules.md
+    - CI/CD Recipes: sdk-reference/guides/ci-cd.md
   - Reference:
     - CLI Commands: sdk-reference/reference/cli.md
     - Module API: sdk-reference/reference/module.md

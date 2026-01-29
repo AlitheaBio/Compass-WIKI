@@ -55,6 +55,18 @@ s3 = self.data.storage.get_s3_client()
 obj = s3.get_object(Bucket="...", Key="...")
 ```
 
+### Shared Catalog Access
+
+Shared catalogs (`alithea-bio/immunopeptidomics`, `alithea-bio/genetics`) are **read-only** for all organizations except the platform owner (Alithea Bio).
+
+```python
+# For non-platform-owner organizations, write requests are silently downgraded
+creds = self.data.storage.get_credentials(mode="write")
+# mode="write" becomes "read" for shared catalogs
+```
+
+This ensures reference data integrity while allowing all organizations to consume shared datasets.
+
 ### Working with Other Catalogs
 
 If you need to access data from a different domain (e.g., Genetics), initialize a dedicated client:
