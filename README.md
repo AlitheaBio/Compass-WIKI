@@ -1,42 +1,46 @@
-# Alithea Bio Compass Wiki
+# Compass-WIKI
 
-Welcome to the official module developer resources for the Compass platform. This repository contains examples, templates, and guides to help you build, test, and publish modules.
+Documentation site for the HLA-Compass SDK.
 
-## 📂 Structure
+**Live site:** [docs.alithea.bio](https://docs.alithea.bio)
 
-*   **`examples/`**: Complete, working examples of modules and workflows.
-    *   `modules/`: Python and Hybrid (UI+Python) module examples.
-    *   `flows/`: Workflow definition examples (`.json`).
-*   **`templates/`**: Starter code used by the `hla-compass init` CLI command.
-*   **`style-guides/`**: UI/UX best practices for building module interfaces.
+## Structure
 
-## 🚀 Getting Started
-
-1.  **Install the SDK:**
-    ```bash
-    pip install hla-compass
-    ```
-
-2.  **Use a Template:**
-    ```bash
-    hla-compass init my-module --template ui
-    ```
-
-3.  **Run an Example:**
-    Clone this repo and navigate to an example:
-    ```bash
-    cd examples/modules/hello-world
-    hla-compass dev
-    ```
-
-## Development Setup
-
-Install pre-commit hooks:
-```bash
-pip install pre-commit
-pre-commit install
+```
+docs/                   # MkDocs documentation source
+terraform/              # Infrastructure as Code
+scripts/                # Local development scripts
 ```
 
-## 📚 Documentation
+## Local Development
 
-Full documentation is available at [docs.alithea.bio](https://docs.alithea.bio).
+```bash
+# Install dependencies
+pip install mkdocs-material mkdocstrings[python] hla-compass
+
+# Serve locally with hot reload
+mkdocs serve
+
+# Build static site
+mkdocs build
+```
+
+## Deployment
+
+Documentation is automatically deployed to [docs.alithea.bio](https://docs.alithea.bio) on every push to `main`.
+
+For manual deployment:
+
+```bash
+./scripts/deploy.sh
+```
+
+## Infrastructure
+
+AWS infrastructure is managed with Terraform. See [terraform/README.md](terraform/README.md) for details.
+
+## Contributing
+
+1. Edit documentation in `docs/`
+2. Preview with `mkdocs serve`
+3. Submit a pull request

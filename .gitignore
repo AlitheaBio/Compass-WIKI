@@ -8,24 +8,20 @@
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-.pytest_cache/
 .venv/
 venv/
-
-# Node
-node_modules/
 
 # MkDocs
 site/
 
-# Local env (avoid leaking secrets)
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
+
+# Local env
 .env
 .env.*
 !.env.example
-!.env.*.example
-
-# Deployment artifacts
-*_config.json
-*_policy.json
-function_code.json

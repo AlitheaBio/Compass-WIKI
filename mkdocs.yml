@@ -33,8 +33,6 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths:
-            - ../HLA-Compass-platform/sdk/python
           options:
             show_source: false
             show_root_heading: true
@@ -51,6 +49,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - SDK Overview: sdk-reference/index.md
   - Getting Started: sdk-reference/guides/getting-started.md
   - Guides:
     - Module Development: sdk-reference/guides/module-development.md
